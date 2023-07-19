@@ -31,7 +31,8 @@ def get_wp(team,
            mode = "normal",
            mode_high_weight = 1,
            mode_low_weight = 1):
-    wins, losses = 0,0
+    
+    wins = losses = 0
     home_win_weight = home_loss_weight = away_win_weight = away_loss_weight = 1
 
     if mode == "baseball":
@@ -65,6 +66,7 @@ def get_wp(team,
 
 # Get the winning percentage of "team" without games against "opponent"
 def get_wp_minus_team(team, opponent, games):
+
     games_without_opponent = []
 
     for game in games:
@@ -75,6 +77,7 @@ def get_wp_minus_team(team, opponent, games):
 
 # Calculate "team"s opponents winning percentage sans "team"
 def get_opwp(team, games):
+
     opponent_schedule = []
 
     for game in games:
@@ -89,6 +92,7 @@ def get_opwp(team, games):
 
 # Calculate "team"s opponents opponents winning percentage sans "team"
 def get_opopwp(team, games):
+    
     opponents = []
 
     for game in games:
