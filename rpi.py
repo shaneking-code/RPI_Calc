@@ -1,3 +1,4 @@
+"""
 gameslog = [
     { "Winner" : "UCONN", "Loser" : "Kansas", "Location" : "UCONN"},
     { "Winner" : "UCONN", "Loser" : "Duke", "Location" : "UCONN"},
@@ -6,17 +7,18 @@ gameslog = [
     { "Winner" : "Duke", "Loser" : "Wisconsin", "Location" : "Duke"},
     { "Winner" : "Kansas", "Loser" : "Wisconsin", "Location" : "Wisconsin"}
 ]
+"""
 
 # Calculate RPI of "team"
 def calc_rpi(team,
              games,
-             location_matters = False,
-             mode = "normal",
-             mode_high_weight = 1,
-             mode_low_weight = 1,
-             weight_wp = 0.25,
-             weight_opwp = 0.50,
-             weight_opopwp = 0.25):
+             location_matters=False,
+             mode="normal",
+             mode_high_weight=1,
+             mode_low_weight=1,
+             weight_wp=0.25,
+             weight_opwp=0.50,
+             weight_opopwp=0.25):
 
     wp     = get_wp(team, games, location_matters, mode, mode_high_weight, mode_low_weight)
     opwp   = get_opwp(team, games)
@@ -27,10 +29,10 @@ def calc_rpi(team,
 # Calculate winning percentage of "team"
 def get_wp(team,
            games,
-           location_matters = False,
-           mode = "normal",
-           mode_high_weight = 1,
-           mode_low_weight = 1):
+           location_matters=False,
+           mode="normal",
+           mode_high_weight=1,
+           mode_low_weight=1):
     
     wins = losses = 0
     home_win_weight = home_loss_weight = away_win_weight = away_loss_weight = 1
@@ -92,7 +94,7 @@ def get_opwp(team, games):
 
 # Calculate "team"s opponents opponents winning percentage sans "team"
 def get_opopwp(team, games):
-    
+
     opponents = []
 
     for game in games:
@@ -108,9 +110,10 @@ def get_opopwp(team, games):
 
     return sum(opponents_opwp) / len(opponents_opwp)
 
+"""
 teams = ["UCONN", "Kansas", "Duke", "Wisconsin"]
 location_matters_test = True
-mode = "custom"
+mode = "normal"
 mode_high_weight = 1.3
 mode_low_weight = 0.7
 
@@ -123,3 +126,4 @@ for team in teams:
     print(f"{team}'s opponents winning percentage is: {team_opwp:.4f}")
     print(f"{team}'s opponents opponents winning percentage is {team_opopwp:.4f}")
     print(f"{team}'s RPI is: {team_rpi:.4f}\n")
+"""
