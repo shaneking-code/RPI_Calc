@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1> Game Details </h1>
+    <p>Game Date: {{game.date}}</p>
+    <p>Game Winner: <a href="/rpiapp/teams/{{game.winner.id}}/" > {{game.winner}}</a></p>
+    <p>Game Loser: <a href="/rpiapp/teams/{{game.loser.id}}/" > {{game.loser}}</a></p>
+    <p>Home Team: <a href="/rpiapp/teams/{{game.home_team.id}}/" > {{game.home_team}}</a></p>
+    <p>Away Team: <a href="/rpiapp/teams/{{game.away_team.id}}/" > {{game.away_team}}</a></p>
+</body>
+</html>

@@ -6,6 +6,15 @@
     <title>Games</title>
 </head>
 <body>
-
+    <h1> Latest games in the database: </h1>
+    {% if latest_games %}
+        <ul>
+            {% for game in latest_games %}
+                <li><a href="/rpiapp/games/{{game.id}}" > {{game}}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p> No recent games available... </p>
+    {% endif %}
 </body>
 </html>

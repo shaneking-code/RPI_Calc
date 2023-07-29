@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>{{team.name}}'s Games: </h1>
+    {% if team_games %}
+        <ul>
+            {% for game in team_games %}
+                <li><a href="/rpiapp/games/{{game.id}}/" > {{game}}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p> No games played... </p>
+    {% endif %}
+</body>
+</html>
