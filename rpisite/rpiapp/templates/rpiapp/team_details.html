@@ -7,19 +7,17 @@
 </head>
 <body>
     <h1>{{team.name}}'s Games: </h1>
-    {% if games_by_season %}
+    {% if team_games %}
+    {% regroup team_games by season as seasons_list %}
         <ul>
-            {% for season,games in games_by_season.items %}
-                <li> {{season.year}} </li>
+            {% for season in seasons_list %}
+            <li>{{season.grouper}}
                 <ul>
-                    {% for game in games %}
-                        {% if not game %}
-                            <li> Game not found </li>
-                        {% else %}
-                            <li><a href="{% url 'rpiapp:game_details' game.id %}"> {{game}}</a></li>
-                        {% endif %}
+                    {% for game in season.list %}
+                        <li><a href="{% url 'rpiapp:game_details' game.id %}"> {{game}}</a></li>
                     {% endfor %}
                 </ul>
+            </li>
             {% endfor %}
         </ul>
     {% else %}

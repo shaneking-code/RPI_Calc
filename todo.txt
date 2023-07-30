@@ -1,0 +1,44 @@
+What do I want
+
+For Leagues:
+    View all teams (e.g. Red Sox, Yankees, Rays, Blue Jays, Orioles, ...)
+    View all seasons played in this league (e.g. MLB 2023, MLB 2022, MLB 1999, ...)
+    View most recent games?
+
+For Seasons:
+    Link back to league
+    View all games
+    View RPIs and standings
+
+For Teams:
+    View all games played by Season (e.g. Red Sox 2022: Red Sox vs. Yankees (6-6-2022), Rays vs. Red Sox (6-8-2022), Red Sox 2021: Red Sox vs. Orioles (7-3-2021))
+    View Season W/L Record
+    View Season RPI rank
+
+For Games:
+    Link to Season game takes place in
+    Link to Teams in game
+    Teams record at the time of the game (Rays (22-11) vs. Red Sox (19-13))
+
+From URLs
+
+rpiapp/leagues/ -> view all leagues in db
+rpiapp/leagues/league_id -> view specific league
+rpiapp/leagues/league_id/seasons/season_id -> view specific season from a specific league
+
+rpiapp/games/game_id -> view specific game
+rpiapp/teams/team_id -> view specific team
+
+# Should I have the urls be rpiapp/leagues/league_id/teams/team_id?
+# Pros: Establishes clear hierarchy and shows relationships between each
+# Cons: Long and laborious to handcode
+
+In general:
+    - Possibly flesh out db even more
+    - Add another league/more leagues
+
+Longterm:
+    - Add users
+    - Add ability to share between users
+    - Add search ability for leagues, teams, games
+

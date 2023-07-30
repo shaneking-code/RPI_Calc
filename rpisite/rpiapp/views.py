@@ -17,6 +17,7 @@ def league_details(request, league_id):
 
     league = get_object_or_404(League, id=league_id)
     league_seasons = league.seasons.all()
+    league_seasons = league_seasons.order_by("-year")
     league_teams = league.teams.all()
     context = {
         "league" : league,
@@ -64,15 +65,11 @@ def team_details(request, team_id):
 
     team = get_object_or_404(Team, id=team_id)
     team_games = team.home_games.all() | team.away_games.all()
-    games_by_season = {}
-    for game in team_games:
-        season = game.season
-        if season not in games_by_season:
-            games_by_season[season] = []
-        games_by_season[season].append(game)
+    team_games = team_games.order_by("-season__year")
+
     context = {
         "team" : team,
-        "games_by_season" : games_by_season
+        "team_games" : team_games,
     }
 
     return render(request, "rpiapp/team_details.html", context)
