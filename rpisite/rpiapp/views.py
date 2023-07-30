@@ -16,8 +16,12 @@ def index(request):
 def league_details(request, league_id):
 
     league = get_object_or_404(League, id=league_id)
+    league_seasons = league.seasons.all()
+    league_teams = league.teams.all()
     context = {
-        "league" : league
+        "league" : league,
+        "league_seasons" : league_seasons,
+        "league_teams" : league_teams
     }
 
     return render(request, "rpiapp/league_details.html", context)
@@ -32,15 +36,43 @@ def game_details(request, game_id):
 
     return render(request, "rpiapp/game_details.html", context)
 
+# Get details of a season through seasons/season_id
+def season_details(request, season_id):
+    season = get_object_or_404(Season, id=season_id)
+    season_games = season.games.all()
+    context = {
+        "season" : season,
+        "season_games" : season_games
+    }
+    return render(request, "rpiapp/season_details.html", context)
+
+# Get details of a season through leagues/seasons/season_id
+def season_results(request, season_id):
+
+    season = get_object_or_404(Season, id=season_id)
+    season_games = season.games.all()
+    season_games = season_games.order_by("date")
+    context = {
+        "season" : season,
+        "season_games" : season_games
+    }
+
+    return render(request, "rpiapp/season_results.html", context)
+
 # Get details of a team through teams/team_id
 def team_details(request, team_id):
 
     team = get_object_or_404(Team, id=team_id)
     team_games = team.home_games.all() | team.away_games.all()
-    team_games = team_games.order_by("date")
+    games_by_season = {}
+    for game in team_games:
+        season = game.season
+        if season not in games_by_season:
+            games_by_season[season] = []
+        games_by_season[season].append(game)
     context = {
         "team" : team,
-        "team_games" : team_games
+        "games_by_season" : games_by_season
     }
 
     return render(request, "rpiapp/team_details.html", context)
@@ -71,20 +103,4 @@ def league_games(request, league_id):
 
     return render(request, "rpiapp/league_games.html", context)
     
-
-
-def season_detail(request, season_id):
-    return HttpResponse(f"Viewing Season {season_id}")
-
-def season_results(request, season_id):
-    season = Season.objects.get(id=season_id)
-    output = "<br> ".join([str(game.winner) for game in season.games.all()])
-    return HttpResponse(output)
-
-"""
-def game_detail(request, game_id):
-    game = Game.objects.get(id=game_id)
-    output = str(game)
-    return HttpResponse(output)
-"""
 

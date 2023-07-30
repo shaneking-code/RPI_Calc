@@ -10,7 +10,7 @@
     {% if latest_games %}
         <ul>
             {% for game in latest_games %}
-                <li><a href="/rpiapp/games/{{game.id}}" > {{game}}</a></li>
+                <li><a href="{% url 'rpiapp:game_details' game.id %}" > {{game}}</a></li>
             {% endfor %}
         </ul>
     {% else %}

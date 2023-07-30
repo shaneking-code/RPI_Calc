@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>{{league.name}}'s Seasons</h1>
+    {% if league_seasons %}
+        <ul>
+            {% for season in league_seasons %}
+                <li><a href="{% url 'rpiapp:season_results' season.id %}" > {{season}}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p> No seasons in database... </p>
+    {% endif %}
+    <h1>{{league.name}}'s Teams </h1>
+    {% if league_teams %}
+        <ul>
+            {% for team in league_teams %}
+                <li><a href="{% url 'rpiapp:team_details' team.id %}" > {{team.name}}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p> No teams in league... </p>
+    {% endif %}
+</body>
+</html>
