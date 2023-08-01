@@ -10,7 +10,7 @@
     {% if league_seasons %}
         <ul>
             {% for season in league_seasons %}
-                <li><a href="{% url 'rpiapp:season_results' season.id %}" > {{season}}</a></li>
+                <li><a href="{% url 'rpiapp:season_results' season.league.id season.id %}" > {{season}}</a></li>
             {% endfor %}
         </ul>
     {% else %}
@@ -20,7 +20,7 @@
     {% if league_teams %}
         <ul>
             {% for team in league_teams %}
-                <li><a href="{% url 'rpiapp:team_details' team.id %}" > {{team.name}}</a></li>
+                <li><a href="{% url 'rpiapp:team_details' team.league.id team.id %}" > {{team.name}}</a></li>
             {% endfor %}
         </ul>
     {% else %}

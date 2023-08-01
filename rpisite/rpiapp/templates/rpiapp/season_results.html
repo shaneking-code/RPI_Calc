@@ -6,10 +6,18 @@
     <title>Document</title>
 </head>
 <body>
+    <h1><a href="{% url 'rpiapp:league_details' season.league.id %}" > {{season.league}}</a></h1>
     <h1> {{season.year}} </h1>
+    <h2> Standings: </h2>
+    <ol>
+        {% for rpi,team in rpis_by_team %}
+            <li>{{team}}'s RPI: {{rpi}}</li>
+        {% endfor %}
+    </ol>
+    <h2> Games: </h2>
     <ul>
         {% for game in season_games %}
-            <li><a href="{% url 'rpiapp:game_details' game.id %}"> {{game}} </a></li>
+            <li><a href="{% url 'rpiapp:game_details' game.league.id game.id %}"> {{game}} </a></li>
         {% endfor %}
     </ul>
 </body>

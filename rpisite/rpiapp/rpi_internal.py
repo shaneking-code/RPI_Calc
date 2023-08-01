@@ -64,6 +64,8 @@ def get_wp(team,
             if game["Loser"] == team:
                 losses += 1
 
+    if wins == 0 and losses == 0:
+        return 0
     return wins / (wins + losses)
 
 # Get the winning percentage of "team" without games against "opponent"
