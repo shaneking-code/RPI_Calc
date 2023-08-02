@@ -6,6 +6,11 @@
     <title>Document</title>
 </head>
 <body>
+    <form action="{% url 'rpiapp:add_season' league.id %}" method="post">
+        {% csrf_token %}
+        <input type="number" min="1850" max="2024" name="year">
+        <input type="submit" value="Add Season">
+    </form>
     <h1>{{league.name}}'s Seasons</h1>
     {% if league_seasons %}
         <ul>

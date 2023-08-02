@@ -8,6 +8,20 @@
 <body>
     <h1><a href="{% url 'rpiapp:league_details' season.league.id %}" > {{season.league}}</a></h1>
     <h1> {{season.year}} </h1>
+    <form action="{% url 'rpiapp:add_game' season.league.id season.id %}" method="post">
+        {% csrf_token %}
+        <input type="date" name="date">
+        <datalist id="teams">
+            {% for team in season_teams %}
+                <option value="{{team.name}}">{{team.name}}</option>
+            {% endfor %}
+        </datalist>
+        <input type="search" list="teams" name="winner">
+        <input type="search" list="teams" name="loser">
+        <input type="search" list="teams" name="home_team">
+        <input type="search" list="teams" name="away_team">
+        <input type="submit" value="Add Game">
+    </form>
     <h2> Standings: </h2>
     <ol>
         {% for rpi,team in rpis_by_team %}

@@ -1,16 +1,17 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from .models import Game, Season, Team, League
 from .rpi_internal import calc_rpi
 # Create your views here.
 def index(request):
 
     # Show the most recent 5 games
-    latest_games = Game.objects.all()[:5]
+    latest_games = Game.objects.all().order_by("-id")[:5]
     all_leagues = League.objects.all()
     context = {
         "latest_games" : latest_games,
-        "all_leagues" : all_leagues
+        "all_leagues" : all_leagues,
     }
 
     return render(request, "rpiapp/index.html", context)
@@ -19,9 +20,8 @@ def index(request):
 def league_details(request, league_id):
 
     league = get_object_or_404(League, id=league_id)
-    league_seasons = league.seasons.all()
-    league_seasons = league_seasons.order_by("-year")
-    league_teams = league.teams.all()
+    league_seasons = league.seasons.all().order_by("-year")
+    league_teams = league.teams.all().order_by("name")
         
     context = {
         "league" : league,
@@ -31,6 +31,24 @@ def league_details(request, league_id):
 
     return render(request, "rpiapp/league_details.html", context)
 
+# Add a league
+def add_league(request):
+
+    if request.method == 'POST':
+        league_name = request.POST.get('league_name')
+        leagues_names = [league.name for league in League.objects.all()]
+        #if league_name in leagues_names:
+        if League.objects.all().filter(name=league_name).exists():
+            return HttpResponseRedirect(reverse('rpiapp:index'))
+        league = League.objects.create(name=league_name)
+        league.save()
+
+        return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league.id]))
+    
+    else:
+
+        return HttpResponseRedirect(reverse('rpiapp:index'))
+    
 # Get details of a game through leagues/league_id/games/game_id
 def game_details(request, league_id, game_id):
 
@@ -41,30 +59,44 @@ def game_details(request, league_id, game_id):
 
     return render(request, "rpiapp/game_details.html", context)
 
+def add_game(request, league_id, season_id):
+    
+    if request.method == 'POST':
+        date = request.POST.get('date')
+        winner = Team.objects.get(name=request.POST.get('winner'))
+        loser = Team.objects.get(name=request.POST.get('loser'))
+        home_team = Team.objects.get(name=request.POST.get('home_team'))
+        away_team = Team.objects.get(name=request.POST.get('away_team'))
+        season = Season.objects.get(id=season_id)
+        league = League.objects.get(id=league_id)
+        game = Game(date=date,
+                    winner=winner,
+                    loser=loser,
+                    home_team=home_team,
+                    away_team=away_team,
+                    season=season,
+                    league=league)
+        game.save()
+
+        return HttpResponseRedirect(reverse('rpiapp:season_results', kwargs={ "season_id" : season_id,
+                                                                             "league_id" : league_id}))
+    else:
+
+        return HttpResponseRedirect(reverse('rpiapp:season_results', args=[season_id]))
+    
 # Get details of a season through leagues/league_id/seasons/season_id
 def season_results(request, league_id, season_id):
 
     season = get_object_or_404(Season, id=season_id)
-    season_games = season.season_games.all()
-    season_games = season_games.order_by("date")
-    season_teams = []
+    season_games = season.season_games.all().order_by("date")
+    season_teams = set()
+
     for game in season_games:
         if game.winner.name not in season_teams:
-            season_teams.append(game.winner.name)
+            season_teams.add(game.winner)
         if game.loser.name not in season_teams:
-            season_teams.append(game.loser.name)
-    """
-    standings = {}
-    for team in League.objects.get(id=league_id).teams.all():
-        for game in season_games:
-            if team not in standings:
-                standings[team] = {'wins':0,'losses':0}
-            if game.winner == team:
-                standings[team]['wins'] += 1
-            if game.loser == team:
-                standings[team]['losses'] += 1
-    standings_sorted = dict(reversed(sorted(standings.items(), key=lambda x:x[1]['wins'])))
-    """
+            season_teams.add(game.loser)
+
     season_games_obj = []
     for game in season_games:
         season_games_obj.append({
@@ -74,19 +106,33 @@ def season_results(request, league_id, season_id):
         })
     
     rpis = []
-    for team in season_teams:
-        rpis.append(format(calc_rpi(team,season_games_obj), '.3f'))
+    for team in set(season_teams):
+        rpis.append(format(calc_rpi(team.name,season_games_obj), '.3f'))
     
     rpis_by_team = list(zip(rpis,season_teams))
     rpis_by_team = reversed(sorted(rpis_by_team, key=lambda x: x[0]))
     context = {
         "season" : season,
         "season_games" : season_games,
-        "rpis_by_team" : rpis_by_team
+        "season_teams" : season_teams,
+        "rpis_by_team" : rpis_by_team,
     }
 
     return render(request, "rpiapp/season_results.html", context)
 
+def add_season(request, league_id):
+    league = get_object_or_404(League, id=league_id)
+    if request.method == 'POST':
+        season_year = request.POST.get('year')
+        if league.seasons.filter(year=season_year).exists():
+            return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
+        season = Season(year=season_year,league=League.objects.get(id=league_id))
+        season.save()
+        return HttpResponseRedirect(reverse('rpiapp:season_results', kwargs={"league_id" : league_id,
+                                                                             "season_id" : season.id}))
+    else:
+        return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
+    
 # Get details of a team through leagues/league_id/teams/team_id
 def team_details(request, league_id, team_id):
 
