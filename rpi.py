@@ -8,6 +8,10 @@ gameslog = [
     { "Winner" : "Kansas", "Loser" : "Wisconsin", "Location" : "Wisconsin"}
 ]
 """
+gameslog = [
+    { "Winner" : "Rays", "Loser" : "Blue Jays", "Location" : "Blue Jays"},
+    { "Winner" : "Rays", "Loser" : "Yankees", "Location" : "Rays"}
+]
 
 # Calculate RPI of "team"
 def calc_rpi(team,
@@ -63,7 +67,8 @@ def get_wp(team,
                 wins += 1
             if game["Loser"] == team:
                 losses += 1
-
+    if wins == 0 and losses == 0:
+        return 0
     return wins / (wins + losses)
 
 # Get the winning percentage of "team" without games against "opponent"
@@ -110,20 +115,16 @@ def get_opopwp(team, games):
 
     return sum(opponents_opwp) / len(opponents_opwp)
 
-"""
-teams = ["UCONN", "Kansas", "Duke", "Wisconsin"]
-location_matters_test = True
-mode = "normal"
-mode_high_weight = 1.3
-mode_low_weight = 0.7
+
+teams = ["Rays","Yankees","Blue Jays"]
+
 
 for team in teams:
-    team_wp = get_wp(team, gameslog, location_matters_test, mode)
+    team_wp = get_wp(team, gameslog)
     team_opwp = get_opwp(team, gameslog)
     team_opopwp = get_opopwp(team, gameslog)
-    team_rpi = calc_rpi(team, gameslog, location_matters_test, mode, mode_high_weight, mode_low_weight)
-    print(f"{team}'s winning percentage is: {team_wp:.4f}")
-    print(f"{team}'s opponents winning percentage is: {team_opwp:.4f}")
-    print(f"{team}'s opponents opponents winning percentage is {team_opopwp:.4f}")
+    team_rpi = calc_rpi(team, gameslog)
+    #print(f"{team}'s winning percentage is: {team_wp:.4f}")
+    #print(f"{team}'s opponents winning percentage is: {team_opwp:.4f}")
+    #print(f"{team}'s opponents opponents winning percentage is {team_opopwp:.4f}")
     print(f"{team}'s RPI is: {team_rpi:.4f}\n")
-"""
