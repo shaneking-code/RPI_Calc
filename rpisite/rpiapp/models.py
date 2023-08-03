@@ -6,14 +6,6 @@ class League(models.Model):
 
     def __str__(self):
         return self.name
-    
-class Season(models.Model):
-
-    league = models.ForeignKey(League, on_delete=models.CASCADE, related_name="seasons", null=True)
-    year = models.IntegerField(default=2023)
-
-    def __str__(self):
-        return (f"{self.league}'s {self.year} Season")
 
 class Team(models.Model):
 
@@ -23,6 +15,14 @@ class Team(models.Model):
     def __str__(self):
         return self.name
     
+class Season(models.Model):
+
+    league = models.ForeignKey(League, on_delete=models.CASCADE, related_name="seasons", null=True)
+    year = models.IntegerField(default=2023)
+
+    def __str__(self):
+        return (f"{self.league}'s {self.year} Season")
+
 class Game(models.Model):
 
     date      = models.DateField('Date of game')

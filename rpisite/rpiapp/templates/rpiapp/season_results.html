@@ -12,7 +12,7 @@
     <h1> {{season.year}} </h1>
     <form action="{% url 'rpiapp:add_game' season.league.id season.id %}" method="post">
         {% csrf_token %}
-        <input type="date" name="date">
+        <input type="date" name="date" min="{{season.year}}-01-01" max="{{season.year}}-12-31">
         <datalist id="teams">
             {% for team in league_teams %}
                 <option value="{{team.name}}">{{team.name}}</option>
@@ -33,7 +33,7 @@
     <h2> Games: </h2>
     <ul>
         {% for game in season_games %}
-            <li><a href="{% url 'rpiapp:game_details' game.league.id game.id %}"> {{game}} </a></li>
+            <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}"> {{game}} </a></li>
             <form action="{% url 'rpiapp:delete_game' game.league.id game.season.id game.id %}" method="post">
                 {% csrf_token %}
                 <input type="submit" value="X">

@@ -1,3 +1,4 @@
+{% extends 'rpiapp/navbar.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Games</title>
 </head>
+{% block content %}
 <body>
     <form action="{% url 'rpiapp:add_league' %}" method="post">
         {% csrf_token %}
@@ -26,11 +28,12 @@
     {% if latest_games %}
         <ul>
             {% for game in latest_games %}
-                <li><a href="{% url 'rpiapp:game_details' game.league.id game.id %}" > {{game}}</a></li>
+                <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}" > {{game}}</a></li>
             {% endfor %}
         </ul>
     {% else %}
         <p> No recent games available... </p>
     {% endif %}
 </body>
+{% endblock %}
 </html>
