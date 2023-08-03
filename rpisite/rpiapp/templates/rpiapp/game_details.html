@@ -1,3 +1,4 @@
+{% extends 'rpiapp/navbar.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+{% block content %}
 <body>
     <h1> Game Details </h1>
     <p><a href="{% url 'rpiapp:season_results' game.league.id game.season.id %}" > Game Season: {{game.season}}</a></p>
@@ -15,4 +17,5 @@
     <p>Home Team: <a href="{% url 'rpiapp:team_details' game.home_team.league.id game.home_team.id %}" > {{game.home_team}}</a></p>
     <p>Away Team: <a href="{% url 'rpiapp:team_details' game.away_team.league.id game.away_team.id %}" > {{game.away_team}}</a></p>
 </body>
+{% endblock %}
 </html>

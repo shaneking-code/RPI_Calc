@@ -13,7 +13,14 @@ urlpatterns = [
     path("leagues/<int:league_id>/teams/<int:team_id>/", views.team_details, name="team_details"),
     path("leagues/<int:league_id>/games/<int:game_id>/", views.game_details, name="game_details"),
     path("leagues/<int:league_id>/seasons/<int:season_id>/", views.season_results, name="season_results"),
+
     path("addleague/", views.add_league, name="add_league"),
     path("addseason/<int:league_id>/", views.add_season, name="add_season"),
-    path("addgame/league/<int:league_id>/season/<int:season_id>/", views.add_game, name="add_game")
+    path("addgame/league/<int:league_id>/season/<int:season_id>/", views.add_game, name="add_game"),
+    path("addteam/league/<int:league_id>", views.add_team, name="add_team"),
+
+    path("deleteleague/<int:league_id>/", views.delete_league, name="delete_league"),
+    path("deleteseason/league/<int:league_id>/season/<int:season_id>/", views.delete_season, name="delete_season"),
+    path("deletegame/league/<int:league_id>/season/<int:season_id>/game/<int:game_id>/", views.delete_game, name="delete_game"),
+    path("deleteteam/league/<int:league_id>/team/<int:team_id>/", views.delete_team, name="delete_team")
 ]

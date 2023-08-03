@@ -13,7 +13,7 @@ class Season(models.Model):
     year = models.IntegerField(default=2023)
 
     def __str__(self):
-        return (f"{self.year} Season")
+        return (f"{self.league}'s {self.year} Season")
 
 class Team(models.Model):
 

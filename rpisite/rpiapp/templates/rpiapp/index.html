@@ -16,6 +16,10 @@
     <ul>
         {% for league in all_leagues %}
         <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a></li>
+        <form action="{% url 'rpiapp:delete_league' league.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="X">
+        </form>
         {% endfor %}
     </ul>
     <h1> Latest games in the database: </h1>

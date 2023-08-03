@@ -1,3 +1,4 @@
+{% extends 'rpiapp/navbar.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+{% block content %}
 <body>
     <h1>{{team.name}}'s Games: </h1>
     {% if team_games_by_season %}
@@ -22,4 +24,5 @@
         <p> No games played... </p>
     {% endif %}
 </body>
+{% endblock %}
 </html>

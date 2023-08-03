@@ -1,3 +1,4 @@
+{% extends 'rpiapp/navbar.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+{% block content %}
 <body>
     <h1><a href="{% url 'rpiapp:league_details' season.league.id %}" > {{season.league}}</a></h1>
     <h1> {{season.year}} </h1>
@@ -12,7 +14,7 @@
         {% csrf_token %}
         <input type="date" name="date">
         <datalist id="teams">
-            {% for team in season_teams %}
+            {% for team in league_teams %}
                 <option value="{{team.name}}">{{team.name}}</option>
             {% endfor %}
         </datalist>
@@ -32,7 +34,12 @@
     <ul>
         {% for game in season_games %}
             <li><a href="{% url 'rpiapp:game_details' game.league.id game.id %}"> {{game}} </a></li>
+            <form action="{% url 'rpiapp:delete_game' game.league.id game.season.id game.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="X">
+            </form>
         {% endfor %}
     </ul>
 </body>
+{% endblock %}
 </html>

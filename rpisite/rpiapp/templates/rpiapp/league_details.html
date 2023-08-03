@@ -1,3 +1,4 @@
+{% extends 'rpiapp/navbar.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,17 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+{% block content %}
 <body>
     <form action="{% url 'rpiapp:add_season' league.id %}" method="post">
         {% csrf_token %}
         <input type="number" min="1850" max="2024" name="year">
         <input type="submit" value="Add Season">
     </form>
+    <form action="{% url 'rpiapp:add_team' league.id %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="team_name">
+        <input type="submit" value="Add Team">
+    </form>
     <h1>{{league.name}}'s Seasons</h1>
     {% if league_seasons %}
         <ul>
             {% for season in league_seasons %}
-                <li><a href="{% url 'rpiapp:season_results' season.league.id season.id %}" > {{season}}</a></li>
+                <li><a href="{% url 'rpiapp:season_results' season.league.id season.id %}" > {{season.year}} Season</a>
+                    <form style="display:inline;" action="{% url 'rpiapp:delete_season' season.league.id season.id %}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" value="X">
+                    </form>
+                </li>
             {% endfor %}
         </ul>
     {% else %}
@@ -25,11 +37,17 @@
     {% if league_teams %}
         <ul>
             {% for team in league_teams %}
-                <li><a href="{% url 'rpiapp:team_details' team.league.id team.id %}" > {{team.name}}</a></li>
+                <li><a href="{% url 'rpiapp:team_details' team.league.id team.id %}" > {{team.name}}</a>
+                    <form style="display:inline;" action="{% url 'rpiapp:delete_team' team.league.id team.id %}" method="post">
+                        {% csrf_token %}
+                            <input type="submit" value="X">
+                    </form>
+                </li>
             {% endfor %}
         </ul>
     {% else %}
         <p> No teams in league... </p>
     {% endif %}
 </body>
+{% endblock %}
 </html>
