@@ -4,7 +4,11 @@ from . import views
 app_name = "rpiapp"
 urlpatterns = [
     path("", views.index, name="index"),
-    
+    path("error/<str:error>/", views.error, name="error"),
+
+    path("leagues/search/", views.league_search, name="league_search"),
+    path("leagues/<int:league_id>/teams/search/", views.team_search, name="team_search"),
+    path("leagues/<int:league_id>/seasons/<int:season_id>/search/", views.game_search, name="game_search"),
     #path("search/leagues/", views.search_leagues, name="search_leagues"),
     #path("search/teams/", views.search_teams, name="search_teams"),
     #path("search/games/", views.search_games, name="search_games"),

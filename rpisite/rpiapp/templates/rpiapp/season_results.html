@@ -8,6 +8,11 @@
 </head>
 {% block content %}
 <body>
+    <form action="{% url 'rpiapp:game_search' season.league.id season.id %}" method="post">
+        {% csrf_token %}
+        <input type="date" name="date" min="{{season.year}}-01-01" max="{{season.year}}-12-31">
+        <input type="submit" value="Search for games on date">
+    </form>
     <h1><a href="{% url 'rpiapp:league_details' season.league.id %}" > {{season.league}}</a></h1>
     <h1> {{season.year}} </h1>
     <form action="{% url 'rpiapp:add_game' season.league.id season.id %}" method="post">
@@ -18,10 +23,10 @@
                 <option value="{{team.name}}">{{team.name}}</option>
             {% endfor %}
         </datalist>
-        <input type="search" list="teams" name="winner">
-        <input type="search" list="teams" name="loser">
-        <input type="search" list="teams" name="home_team">
-        <input type="search" list="teams" name="away_team">
+        <input type="search" list="teams" placeholder="Winner" name="winner">
+        <input type="search" list="teams" placeholder="Loser" name="loser">
+        <input type="search" list="teams" placeholder="Home Team" name="home_team">
+        <input type="search" list="teams" placeholder="Away Team" name="away_team">
         <input type="submit" value="Add Game">
     </form>
     <h2> Standings: </h2>
@@ -32,12 +37,17 @@
     </ol>
     <h2> Games: </h2>
     <ul>
-        {% for game in season_games %}
-            <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}"> {{game}} </a></li>
-            <form action="{% url 'rpiapp:delete_game' game.league.id game.season.id game.id %}" method="post">
-                {% csrf_token %}
-                <input type="submit" value="X">
-            </form>
+        {% for date, games in season_games_by_date %}
+        <li>{{date}}</li>
+        <ul>
+            {% for game in games %}
+                <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}">{{game}}</a></li>
+                <form action="{% url 'rpiapp:delete_game' game.league.id game.season.id game.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="X">
+                </form>
+            {% endfor %}
+        </ul>
         {% endfor %}
     </ul>
 </body>

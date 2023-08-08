@@ -8,10 +8,19 @@
 </head>
 {% block content %}
 <body>
+    <h2> Search for League: </h2>
+    <form action="{% url 'rpiapp:league_search' %}" method="post">
+        {% csrf_token %}
+        <input type="search" placeholder="League name" name="search_term">
+        <input type="submit" value="Search for League">
+    </form>
+    <h2> Add League </h2>
     <form action="{% url 'rpiapp:add_league' %}" method="post">
         {% csrf_token %}
+        {% if error %}
         <h1> {{error}}</h1>
-        <input type="text" name="league_name">
+        {% endif %}
+        <input type="text" placeholder="League name" name="league_name">
         <input type="submit" value="Add League">
     </form>
     <h1> All Leagues: </h1>
