@@ -20,9 +20,6 @@
     <h2> Add League </h2>
     <form action="{% url 'rpiapp:add_league' %}" method="post">
         {% csrf_token %}
-        {% if error %}
-        <h1> {{error}}</h1>
-        {% endif %}
         <input type="text" placeholder="League name" name="league_name">
         <input type="submit" value="Add League">
     </form>
