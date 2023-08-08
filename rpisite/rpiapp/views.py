@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Q
+from django.contrib import messages
 from .models import League, Team, Season, Game
 from .rpi_internal import calc_rpi
 
@@ -19,15 +20,6 @@ def index(request):
     }
 
     return render(request, "rpiapp/index.html", context)
-
-# Show error page
-def error(request, error):
-
-    context = {
-        "error" : error
-    }
-
-    return render(request, "rpiapp/error.html", context)
 
 #Search for a league
 def league_search(request):
@@ -95,16 +87,15 @@ def add_league(request):
     if request.method == 'POST':
         league_name = request.POST.get('league_name')
         if League.objects.all().filter(name=league_name).exists():
-            error = "League already exists"
-            return HttpResponseRedirect(reverse('rpiapp:error', args=[error]))
-        league = League.objects.create(name=league_name)
-        league.save()
+            messages.error(request, f"League with name '{league_name}' already exists")
 
-        return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league.id]))
+        else:
+            league = League.objects.create(name=league_name)
+            league.save()
+            messages.success(request, f"League '{league}' created successfully")
+            return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league.id]))
     
-    else:
-
-        return HttpResponseRedirect(reverse('rpiapp:index'))
+    return HttpResponseRedirect(reverse('rpiapp:index'))
 
 # Delete a league
 def delete_league(request, league_id):
@@ -112,6 +103,7 @@ def delete_league(request, league_id):
     if request.method == 'POST':
         league = get_object_or_404(League, id=league_id)
         league.delete()
+        messages.success(request, f"League {league} deleted successfully")
 
     return HttpResponseRedirect(reverse('rpiapp:index'))
     
@@ -148,10 +140,11 @@ def add_team(request,league_id):
         team_name = request.POST.get('team_name')
         team_league = get_object_or_404(League, id=league_id)
         if Team.objects.filter(Q(name=team_name) & Q(league=team_league)).exists():
-            error = "Team already exists"
-            return HttpResponseRedirect(reverse('rpiapp:error', args=[error]))
-        team = Team.objects.create(name=team_name, league=team_league)
-        team.save()
+            messages.error(request, f"Team with name '{team_name}' already exists")
+        else:
+            team = Team.objects.create(name=team_name, league=team_league)
+            team.save()
+            messages.success(request, f"Team '{team}' created successfully")
 
     return HttpResponseRedirect(reverse("rpiapp:league_details", args=[league_id]))
 
@@ -161,6 +154,7 @@ def delete_team(request,league_id,team_id):
     if request.method == 'POST':
         team = get_object_or_404(Team, id=team_id)
         team.delete()
+        messages.success(request, f"Team '{team}' deleted successfully")
 
     return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
 
@@ -226,14 +220,14 @@ def add_season(request, league_id):
     if request.method == 'POST':
         season_year = request.POST.get('year')
         if league.seasons.filter(year=season_year).exists():
-            error = "Season already exists"
-            return HttpResponseRedirect(reverse('rpiapp:error', args=[error]))
-        season = Season(year=season_year,league=League.objects.get(id=league_id))
-        season.save()
-        return HttpResponseRedirect(reverse('rpiapp:season_results', kwargs={"league_id" : league_id,
-                                                                             "season_id" : season.id}))
-    else:
-        return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
+            messages.error(request, f"{season_year} Season already exists")
+            
+        else:
+            season = Season(year=season_year,league=League.objects.get(id=league_id))
+            season.save()
+            messages.success(request, f"Season created successfully: {season.year}")
+
+    return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
 
 # Delete a season
 def delete_season(request, league_id, season_id):
@@ -241,6 +235,7 @@ def delete_season(request, league_id, season_id):
     if request.method == 'POST':
         season = get_object_or_404(Season, id=season_id)
         season.delete()
+        messages.success(request, f"Season deleted successfully: {season.year}")
 
     return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
     
@@ -259,10 +254,10 @@ def add_game(request, league_id, season_id):
     
     if request.method == 'POST':
         date = request.POST.get('date')
-        winner = Team.objects.get(name=request.POST.get('winner'))
-        loser = Team.objects.get(name=request.POST.get('loser'))
-        home_team = Team.objects.get(name=request.POST.get('home_team'))
-        away_team = Team.objects.get(name=request.POST.get('away_team'))
+        winner = Team.objects.get(name=request.POST.get('winner'), league=league_id)
+        loser = Team.objects.get(name=request.POST.get('loser'), league=league_id)
+        home_team = Team.objects.get(name=request.POST.get('home_team'), league=league_id)
+        away_team = Team.objects.get(name=request.POST.get('away_team'), league=league_id)
         season = Season.objects.get(id=season_id)
         league = League.objects.get(id=league_id)
         game = Game(date=date,
@@ -274,11 +269,10 @@ def add_game(request, league_id, season_id):
                     league=league)
         game.save()
 
-        return HttpResponseRedirect(reverse('rpiapp:season_results', kwargs={ "season_id" : season_id,
-                                                                             "league_id" : league_id}))
-    else:
+        messages.success(request, f"Game between {game.home_team} and {game.away_team} on {game.date} created successfully")
 
-        return HttpResponseRedirect(reverse('rpiapp:season_results', args=[season_id]))
+    return HttpResponseRedirect(reverse('rpiapp:season_results', kwargs={"season_id" : season_id,
+                                                                             "league_id" : league_id}))
 
 # Delete a game
 def delete_game(request, league_id, season_id, game_id):
@@ -287,5 +281,7 @@ def delete_game(request, league_id, season_id, game_id):
         game = get_object_or_404(Game, id=game_id)
         game.delete()
 
+        messages.success(request, f"Game between {game.home_team} and {game.away_team} on {game.date} deleted successfully")
+
     return HttpResponseRedirect(reverse('rpiapp:season_results', kwargs={ "season_id" : season_id,
-                                                                             "league_id" : league_id}))
+                                                                          "league_id" : league_id}))

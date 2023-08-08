@@ -8,6 +8,9 @@
 </head>
 {% block content %}
 <body>
+    {% for message in messages %}
+    <p> {{message}} </p>
+    {% endfor %}
     <form action="{% url 'rpiapp:game_search' season.league.id season.id %}" method="post">
         {% csrf_token %}
         <input type="date" name="date" min="{{season.year}}-01-01" max="{{season.year}}-12-31">
