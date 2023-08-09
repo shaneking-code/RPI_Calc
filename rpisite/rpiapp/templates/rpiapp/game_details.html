@@ -9,7 +9,7 @@
 {% block content %}
 <body>
     <h1> Game Details </h1>
-    <p><a href="{% url 'rpiapp:season_results' game.league.id game.season.id %}" > Game Season: {{game.season}}</a></p>
+    <p><a href="{% url 'rpiapp:season_details' game.league.id game.season.id %}" > Game Season: {{game.season}}</a></p>
     <p><a href="{% url 'rpiapp:league_details' game.league.id %}" > Game League: {{game.league}}</a></p>
     <p>Game Date: {{game.date}}</p>
     <p>Game Winner: <a href="{% url 'rpiapp:team_details' game.winner.league.id game.winner.id %}" > {{game.winner}}</a></p>

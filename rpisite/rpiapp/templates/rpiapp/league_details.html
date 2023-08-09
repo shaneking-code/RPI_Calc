@@ -39,7 +39,7 @@
     {% if league_seasons %}
         <ul>
             {% for season in league_seasons %}
-                <li><a href="{% url 'rpiapp:season_results' season.league.id season.id %}" > {{season.year}} Season</a>
+                <li><a href="{% url 'rpiapp:season_details' season.league.id season.id %}" > {{season.year}} Season</a>
                     <form style="display:inline;" action="{% url 'rpiapp:delete_season' season.league.id season.id %}" method="post">
                         {% csrf_token %}
                         <input type="submit" value="X">

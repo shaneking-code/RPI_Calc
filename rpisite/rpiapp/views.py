@@ -21,6 +21,7 @@ def index(request):
 
     return render(request, "rpiapp/index.html", context)
 
+### SEARCH FUNCTIONS ###
 #Search for a league
 def league_search(request):
 
@@ -65,7 +66,8 @@ def game_search(request, league_id, season_id):
         }
 
         return render(request, "rpiapp/game_search.html", context)
-    
+
+### MODEL FUNCTIONS ###
 # Get details of a league through leagues/league_id/
 def league_details(request, league_id):
 
@@ -159,7 +161,7 @@ def delete_team(request,league_id,team_id):
     return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
 
 # Get details of a season through leagues/league_id/seasons/season_id
-def season_results(request, league_id, season_id):
+def season_details(request, league_id, season_id):
 
     season = get_object_or_404(Season, id=season_id)
     season_games = season.season_games.all().order_by("-date")
@@ -205,7 +207,7 @@ def season_results(request, league_id, season_id):
         "rpis_by_team" : rpis_by_team,
     }
 
-    return render(request, "rpiapp/season_results.html", context)
+    return render(request, "rpiapp/season_details.html", context)
 
 # Add a season
 def add_season(request, league_id):
@@ -266,7 +268,7 @@ def add_game(request, league_id, season_id):
 
         messages.success(request, f"Game between {game.home_team} and {game.away_team} on {game.date} created successfully")
 
-    return HttpResponseRedirect(reverse('rpiapp:season_results', kwargs={"season_id" : season_id,
+    return HttpResponseRedirect(reverse('rpiapp:season_details', kwargs={"season_id" : season_id,
                                                                              "league_id" : league_id}))
 
 # Delete a game
@@ -278,5 +280,5 @@ def delete_game(request, league_id, season_id, game_id):
 
         messages.success(request, f"Game between {game.home_team} and {game.away_team} on {game.date} deleted successfully")
 
-    return HttpResponseRedirect(reverse('rpiapp:season_results', kwargs={ "season_id" : season_id,
+    return HttpResponseRedirect(reverse('rpiapp:season_details', kwargs={ "season_id" : season_id,
                                                                           "league_id" : league_id}))
