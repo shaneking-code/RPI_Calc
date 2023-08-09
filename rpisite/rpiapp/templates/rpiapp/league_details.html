@@ -11,25 +11,30 @@
     {% for message in messages %}
         <p> {{message}} </p>
     {% endfor %}
+
     <h1> {{league}} </h1>
+
     <h2> Team Search: </h2>
     <form action="{% url 'rpiapp:team_search' league.id %}" method="post">
         {% csrf_token %}
         <input type="search" placeholder="Team name" name="search_term">
         <input type="submit" value="Search for team">
     </form>
+
     <h2> Add Season: </h2>
     <form action="{% url 'rpiapp:add_season' league.id %}" method="post">
         {% csrf_token %}
         <input type="number" min="1850" max="2024" placeholder="2023" name="year">
         <input type="submit" value="Add Season">
     </form>
+
     <h2> Add Team: </h2>
     <form action="{% url 'rpiapp:add_team' league.id %}" method="post">
         {% csrf_token %}
         <input type="text" placeholder="Team Name" name="team_name">
         <input type="submit" value="Add Team">
     </form>
+
     <h1>{{league.name}}'s Seasons</h1>
     {% if league_seasons %}
         <ul>
@@ -45,6 +50,7 @@
     {% else %}
         <p> No seasons in database... </p>
     {% endif %}
+    
     <h1>{{league.name}}'s Teams </h1>
     {% if league_teams %}
         <ul>

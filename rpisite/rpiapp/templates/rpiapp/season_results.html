@@ -11,13 +11,16 @@
     {% for message in messages %}
     <p> {{message}} </p>
     {% endfor %}
+
     <form action="{% url 'rpiapp:game_search' season.league.id season.id %}" method="post">
         {% csrf_token %}
         <input type="date" name="date" min="{{season.year}}-01-01" max="{{season.year}}-12-31">
         <input type="submit" value="Search for games on date">
     </form>
+
     <h1><a href="{% url 'rpiapp:league_details' season.league.id %}" > {{season.league}}</a></h1>
     <h1> {{season.year}} </h1>
+
     <form action="{% url 'rpiapp:add_game' season.league.id season.id %}" method="post">
         {% csrf_token %}
         <input type="date" name="date" min="{{season.year}}-01-01" max="{{season.year}}-12-31">
@@ -32,15 +35,17 @@
         <input type="search" list="teams" placeholder="Away Team" name="away_team">
         <input type="submit" value="Add Game">
     </form>
+
     <h2> Standings: </h2>
     <ol>
         {% for rpi,team in rpis_by_team %}
             <li>{{team}}'s RPI: {{rpi}}</li>
         {% endfor %}
     </ol>
+    
     <h2> Games: </h2>
     <ul>
-        {% for date, games in season_games_by_date %}
+        {% for date, games in season_games_by_date.items %}
         <li>{{date}}</li>
         <ul>
             {% for game in games %}

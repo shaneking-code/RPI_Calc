@@ -168,28 +168,22 @@ def season_results(request, league_id, season_id):
     season_teams = set()
     # Populate season_teams
     for game in season_games:
-        # If game winner is not in season_teams, add them
         if game.winner.name not in season_teams:
             season_teams.add(game.winner)
-        # If game loser is not in season_teams, add them
         if game.loser.name not in season_teams:
             season_teams.add(game.loser)
 
     season_games_by_date = {}
     # Populate season_games_by_date
     for game in season_games:
-        # If date has no games associated, add it
         if game.date not in season_games_by_date:
             season_games_by_date[game.date] = [game]
-        # If date has games associated, append it
         else:
             season_games_by_date[game.date].append(game)
 
-    # Get (date, games) pairs from dict
-    season_games_by_date = season_games_by_date.items()
 
-    # Populate season_games_obj
     season_games_obj = []
+    # Populate season_games_obj
     for game in season_games:
         season_games_obj.append({
             "Winner" : game.winner.name,
@@ -223,7 +217,7 @@ def add_season(request, league_id):
             messages.error(request, f"{season_year} Season already exists")
             
         else:
-            season = Season(year=season_year,league=League.objects.get(id=league_id))
+            season = Season(year=season_year,league=league)
             season.save()
             messages.success(request, f"Season created successfully: {season.year}")
 
@@ -252,14 +246,15 @@ def game_details(request, league_id, season_id, game_id):
 # Add a game
 def add_game(request, league_id, season_id):
     
+    league = get_object_or_404(League, id=league_id)
     if request.method == 'POST':
         date = request.POST.get('date')
-        winner = Team.objects.get(name=request.POST.get('winner'), league=league_id)
-        loser = Team.objects.get(name=request.POST.get('loser'), league=league_id)
-        home_team = Team.objects.get(name=request.POST.get('home_team'), league=league_id)
-        away_team = Team.objects.get(name=request.POST.get('away_team'), league=league_id)
-        season = Season.objects.get(id=season_id)
-        league = League.objects.get(id=league_id)
+        winner = get_object_or_404(Team, name=request.POST.get('winner'), league=league)
+        loser = get_object_or_404(Team, name=request.POST.get('loser'), league=league)
+        home_team = get_object_or_404(Team, name=request.POST.get('home_team'), league=league)
+        away_team = get_object_or_404(Team, name=request.POST.get('away_team'), league=league)
+        season = get_object_or_404(Season, id=season_id)
+        
         game = Game(date=date,
                     winner=winner,
                     loser=loser,
