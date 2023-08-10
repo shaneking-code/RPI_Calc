@@ -3,12 +3,13 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Q
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import League, Team, Season, Game
-from .rpi_internal import calc_rpi
-
+from .utils import calc_rpi
 # VIEWS
 
 # Show home page
+#@login_required
 def index(request):
 
     # Show the most recent 5 games
@@ -84,6 +85,7 @@ def league_details(request, league_id):
     return render(request, "rpiapp/league_details.html", context)
 
 # Add a league
+@login_required
 def add_league(request):
 
     if request.method == 'POST':
@@ -92,7 +94,7 @@ def add_league(request):
             messages.error(request, f"League with name '{league_name}' already exists")
 
         else:
-            league = League.objects.create(name=league_name)
+            league = League.objects.create(created_by=request.user, name=league_name)
             league.save()
             messages.success(request, f"League '{league}' created successfully")
             return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league.id]))
@@ -100,6 +102,7 @@ def add_league(request):
     return HttpResponseRedirect(reverse('rpiapp:index'))
 
 # Delete a league
+@login_required
 def delete_league(request, league_id):
     
     if request.method == 'POST':
@@ -136,6 +139,7 @@ def team_details(request, league_id, team_id):
     return render(request, "rpiapp/team_details.html", context)
 
 # Add a team
+@login_required
 def add_team(request,league_id):
 
     if request.method == 'POST':
@@ -151,6 +155,7 @@ def add_team(request,league_id):
     return HttpResponseRedirect(reverse("rpiapp:league_details", args=[league_id]))
 
 # Delete a team
+@login_required
 def delete_team(request,league_id,team_id):
 
     if request.method == 'POST':
@@ -210,6 +215,7 @@ def season_details(request, league_id, season_id):
     return render(request, "rpiapp/season_details.html", context)
 
 # Add a season
+@login_required
 def add_season(request, league_id):
 
     league = get_object_or_404(League, id=league_id)
@@ -226,6 +232,7 @@ def add_season(request, league_id):
     return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
 
 # Delete a season
+@login_required
 def delete_season(request, league_id, season_id):
 
     if request.method == 'POST':
@@ -246,6 +253,7 @@ def game_details(request, league_id, season_id, game_id):
     return render(request, "rpiapp/game_details.html", context)
 
 # Add a game
+@login_required
 def add_game(request, league_id, season_id):
     
     league = get_object_or_404(League, id=league_id)
@@ -272,6 +280,7 @@ def add_game(request, league_id, season_id):
                                                                              "league_id" : league_id}))
 
 # Delete a game
+@login_required
 def delete_game(request, league_id, season_id, game_id):
 
     if request.method == 'POST':

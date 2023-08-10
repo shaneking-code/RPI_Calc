@@ -10,8 +10,17 @@
         <ul>
             <li><a href="{% url 'rpiapp:index' %}"> Home </a></li>
             <li><a href="https://github.com/shaneking-code" target="_blank"> Github </a></li>
+            {% if user.is_authenticated %}
+            <li><a href="{% url 'logout' %}"> Logout </a></li>
+            {% elif request.path != "/accounts/login/" %}
+            <li><a href="{% url 'login' %}"> Login </a></li>
+            {% else %}
+            {% endif %}
         </ul>
     </nav>
     {% block content %}{% endblock %}
+    <footer>
+        Created by Shane K - <script>document.write(new Date().getFullYear())</script>
+    </footer>
 </body>
 </html>

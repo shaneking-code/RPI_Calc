@@ -1,4 +1,4 @@
-{% extends 'rpiapp/navbar.html' %}
+{% extends 'rpiapp/base.html' %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +11,7 @@
     {% for message in messages %}
     <p> {{message}} </p>
     {% endfor %}
+    <h1> Username: {{user.username}} </h1>
     <h2> Search for League: </h2>
     <form action="{% url 'rpiapp:league_search' %}" method="post">
         {% csrf_token %}
@@ -27,10 +28,12 @@
     <ul>
         {% for league in all_leagues %}
         <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a></li>
+        {% if user == league.created_by %}
         <form action="{% url 'rpiapp:delete_league' league.id %}" method="post">
             {% csrf_token %}
             <input type="submit" value="X">
         </form>
+        {% endif %}
         {% endfor %}
     </ul>
     <h1> Latest games in the database: </h1>
