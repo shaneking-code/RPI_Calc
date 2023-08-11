@@ -11,7 +11,6 @@
     {% for message in messages %}
     <p> {{message}} </p>
     {% endfor %}
-    <h1> Username: {{user.username}} </h1>
     <h2> Search for League: </h2>
     <form action="{% url 'rpiapp:league_search' %}" method="post">
         {% csrf_token %}

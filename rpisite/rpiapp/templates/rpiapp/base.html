@@ -1,8 +1,10 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'rpiapp/style.css' %}">
     <title>Document</title>
 </head>
 <body>
@@ -11,10 +13,10 @@
             <li><a href="{% url 'rpiapp:index' %}"> Home </a></li>
             <li><a href="https://github.com/shaneking-code" target="_blank"> Github </a></li>
             {% if user.is_authenticated %}
+            <li> {{user.username}} </li>
             <li><a href="{% url 'rpiapp:logout_user' %}"> Logout </a></li>
             {% elif request.path != "/rpiapp/login/" %}
-            <li><a href="{% url 'rpiapp:login_user' %}"> Login </a></li>
-            <li><a href="{% url 'rpiapp:register_user' %}"> Or Create Account</a></li>
+            <li><a href="{% url 'rpiapp:login_user' %}"> Login </a><span>or </span><a href="{% url 'rpiapp:register_user' %}">Create account</a></li>
             {% else %}
             {% endif %}
         </ul>
