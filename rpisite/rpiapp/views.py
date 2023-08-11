@@ -5,12 +5,11 @@ from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
-#from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
 from .models import League, Team, Season, Game
 from .utils import calc_rpi
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm
 # VIEWS
 # Account views
 def register_user(request):
