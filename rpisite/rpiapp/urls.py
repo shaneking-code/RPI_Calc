@@ -3,6 +3,13 @@ from . import views
 
 app_name = "rpiapp"
 urlpatterns = [
+
+    # User URLs
+    path("register/", views.register_user, name="register_user"),
+    path("login/", views.login_user, name="login_user"),
+    path("logout/", views.logout_user, name="logout_user"),
+
+    # Index URL
     path("", views.index, name="index"),
 
     # Search URLs

@@ -6,16 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<body>
 {% block content %}
-    {% for message in messages %}
-        <p>{{message}}</p>
-    {% endfor %}
-    <form action="{% url 'rpiapp:login_user' %}" method="post">
+<body>
+    <form action="{% url 'rpiapp:register_user' %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" value="Log In">
+        <input type="submit" value="Create account">
     </form>
-{% endblock %}
 </body>
+{% endblock %}
 </html>

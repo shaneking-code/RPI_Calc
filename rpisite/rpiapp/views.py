@@ -1,15 +1,54 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.db.models import Q
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+#from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
 from .models import League, Team, Season, Game
 from .utils import calc_rpi
+from .forms import RegisterForm, LoginForm
 # VIEWS
+# Account views
+def register_user(request):
+
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            username = user.username
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return HttpResponseRedirect(reverse('rpiapp:index'))
+    else:
+        form = RegisterForm()
+
+    return render(request, "registration/register.html", {"form" : form })
+
+def login_user(request):
+
+    if request.method == 'POST':
+        form = AuthenticationForm(None, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return HttpResponseRedirect(reverse('rpiapp:index'))
+    else:
+        form = AuthenticationForm()
+    
+    return render(request, "registration/login.html", {"form" : form})
+
+def logout_user(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('rpiapp:index'))
 
 # Show home page
-#@login_required
 def index(request):
 
     # Show the most recent 5 games
@@ -107,8 +146,11 @@ def delete_league(request, league_id):
     
     if request.method == 'POST':
         league = get_object_or_404(League, id=league_id)
-        league.delete()
-        messages.success(request, f"League {league} deleted successfully")
+        if request.user == league.created_by or request.user.is_superuser:
+            league.delete()
+            messages.success(request, f"League {league} deleted successfully")
+        else:
+            messages.error(request, "You cannot delete this league as you do not own it")
 
     return HttpResponseRedirect(reverse('rpiapp:index'))
     
@@ -143,14 +185,17 @@ def team_details(request, league_id, team_id):
 def add_team(request,league_id):
 
     if request.method == 'POST':
-        team_name = request.POST.get('team_name')
         team_league = get_object_or_404(League, id=league_id)
-        if Team.objects.filter(Q(name=team_name) & Q(league=team_league)).exists():
-            messages.error(request, f"Team with name '{team_name}' already exists")
+        if request.user == team_league.created_by:
+            team_name = request.POST.get('team_name')
+            if Team.objects.filter(Q(name=team_name) & Q(league=team_league)).exists():
+                messages.error(request, f"Team with name '{team_name}' already exists")
+            else:
+                team = Team.objects.create(created_by=request.user, name=team_name, league=team_league)
+                team.save()
+                messages.success(request, f"Team '{team}' created successfully")
         else:
-            team = Team.objects.create(name=team_name, league=team_league)
-            team.save()
-            messages.success(request, f"Team '{team}' created successfully")
+            messages.error(request, "You cannot add this team as you do not own the league")
 
     return HttpResponseRedirect(reverse("rpiapp:league_details", args=[league_id]))
 
@@ -160,8 +205,11 @@ def delete_team(request,league_id,team_id):
 
     if request.method == 'POST':
         team = get_object_or_404(Team, id=team_id)
-        team.delete()
-        messages.success(request, f"Team '{team}' deleted successfully")
+        if request.user == team.created_by or request.user.is_superuser:
+            team.delete()
+            messages.success(request, f"Team '{team}' deleted successfully")
+        else:
+            messages.error(request, "You cannot delete this team as you do not own it")
 
     return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
 
@@ -220,14 +268,17 @@ def add_season(request, league_id):
 
     league = get_object_or_404(League, id=league_id)
     if request.method == 'POST':
-        season_year = request.POST.get('year')
-        if league.seasons.filter(year=season_year).exists():
-            messages.error(request, f"{season_year} Season already exists")
-            
+        if request.user == league.created_by:
+            season_year = request.POST.get('year')
+            if league.seasons.filter(year=season_year).exists():
+                messages.error(request, f"{season_year} Season already exists")
+                
+            else:
+                season = Season(created_by=request.user, year=season_year, league=league)
+                season.save()
+                messages.success(request, f"Season created successfully: {season.year}")
         else:
-            season = Season(year=season_year,league=league)
-            season.save()
-            messages.success(request, f"Season created successfully: {season.year}")
+            messages.error(request, "You cannot add this season as you do not own the league")
 
     return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
 
@@ -237,8 +288,11 @@ def delete_season(request, league_id, season_id):
 
     if request.method == 'POST':
         season = get_object_or_404(Season, id=season_id)
-        season.delete()
-        messages.success(request, f"Season deleted successfully: {season.year}")
+        if request.user == season.created_by or request.user.is_superuser:
+            season.delete()
+            messages.success(request, f"Season deleted successfully: {season.year}")
+        else:
+            messages.error(request, "You cannot delete this season as you do not own it")
 
     return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
     
@@ -258,23 +312,27 @@ def add_game(request, league_id, season_id):
     
     league = get_object_or_404(League, id=league_id)
     if request.method == 'POST':
-        date = request.POST.get('date')
-        winner = get_object_or_404(Team, name=request.POST.get('winner'), league=league)
-        loser = get_object_or_404(Team, name=request.POST.get('loser'), league=league)
-        home_team = get_object_or_404(Team, name=request.POST.get('home_team'), league=league)
-        away_team = get_object_or_404(Team, name=request.POST.get('away_team'), league=league)
-        season = get_object_or_404(Season, id=season_id)
-        
-        game = Game(date=date,
-                    winner=winner,
-                    loser=loser,
-                    home_team=home_team,
-                    away_team=away_team,
-                    season=season,
-                    league=league)
-        game.save()
+        if request.user == league.created_by:
+            date = request.POST.get('date')
+            winner = get_object_or_404(Team, name=request.POST.get('winner'), league=league)
+            loser = get_object_or_404(Team, name=request.POST.get('loser'), league=league)
+            home_team = get_object_or_404(Team, name=request.POST.get('home_team'), league=league)
+            away_team = get_object_or_404(Team, name=request.POST.get('away_team'), league=league)
+            season = get_object_or_404(Season, id=season_id)
+            
+            game = Game(created_by=request.user,
+                        date=date,
+                        winner=winner,
+                        loser=loser,
+                        home_team=home_team,
+                        away_team=away_team,
+                        season=season,
+                        league=league)
+            game.save()
 
-        messages.success(request, f"Game between {game.home_team} and {game.away_team} on {game.date} created successfully")
+            messages.success(request, f"Game between {game.home_team} and {game.away_team} on {game.date} created successfully")
+        else:
+            messages.error(request, "You cannot add this game as you do not own the league")
 
     return HttpResponseRedirect(reverse('rpiapp:season_details', kwargs={"season_id" : season_id,
                                                                              "league_id" : league_id}))
@@ -285,9 +343,11 @@ def delete_game(request, league_id, season_id, game_id):
 
     if request.method == 'POST':
         game = get_object_or_404(Game, id=game_id)
-        game.delete()
-
-        messages.success(request, f"Game between {game.home_team} and {game.away_team} on {game.date} deleted successfully")
+        if request.user == game.created_by or request.user.is_superuser:
+            game.delete()
+            messages.success(request, f"Game between {game.home_team} and {game.away_team} on {game.date} deleted successfully")
+        else:
+            messages.error(request, "You cannot delete this game as you do not own it")
 
     return HttpResponseRedirect(reverse('rpiapp:season_details', kwargs={ "season_id" : season_id,
                                                                           "league_id" : league_id}))

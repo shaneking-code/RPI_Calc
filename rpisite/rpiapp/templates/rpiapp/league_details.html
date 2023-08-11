@@ -21,29 +21,34 @@
         <input type="submit" value="Search for team">
     </form>
 
+    {% if user == league.created_by or user.superuser %}
     <h2> Add Season: </h2>
     <form action="{% url 'rpiapp:add_season' league.id %}" method="post">
         {% csrf_token %}
         <input type="number" min="1850" max="2024" placeholder="2023" name="year">
         <input type="submit" value="Add Season">
     </form>
-
     <h2> Add Team: </h2>
     <form action="{% url 'rpiapp:add_team' league.id %}" method="post">
         {% csrf_token %}
         <input type="text" placeholder="Team Name" name="team_name">
         <input type="submit" value="Add Team">
     </form>
+    {% else %}
+    {% endif %}
 
     <h1>{{league.name}}'s Seasons</h1>
     {% if league_seasons %}
         <ul>
             {% for season in league_seasons %}
                 <li><a href="{% url 'rpiapp:season_details' season.league.id season.id %}" > {{season.year}} Season</a>
+                    {% if user == league.created_by or user.is_superuser %}
                     <form style="display:inline;" action="{% url 'rpiapp:delete_season' season.league.id season.id %}" method="post">
                         {% csrf_token %}
                         <input type="submit" value="X">
                     </form>
+                    {% else %}
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>
@@ -56,10 +61,13 @@
         <ul>
             {% for team in league_teams %}
                 <li><a href="{% url 'rpiapp:team_details' team.league.id team.id %}" > {{team.name}}</a>
+                    {% if user == league.created_by or user.is_superuser %}
                     <form style="display:inline;" action="{% url 'rpiapp:delete_team' team.league.id team.id %}" method="post">
                         {% csrf_token %}
                             <input type="submit" value="X">
                     </form>
+                    {% else %}
+                    {% endif %}
                 </li>
             {% endfor %}
         </ul>

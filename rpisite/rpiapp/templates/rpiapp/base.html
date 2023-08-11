@@ -11,9 +11,10 @@
             <li><a href="{% url 'rpiapp:index' %}"> Home </a></li>
             <li><a href="https://github.com/shaneking-code" target="_blank"> Github </a></li>
             {% if user.is_authenticated %}
-            <li><a href="{% url 'logout' %}"> Logout </a></li>
-            {% elif request.path != "/accounts/login/" %}
-            <li><a href="{% url 'login' %}"> Login </a></li>
+            <li><a href="{% url 'rpiapp:logout_user' %}"> Logout </a></li>
+            {% elif request.path != "/rpiapp/login/" %}
+            <li><a href="{% url 'rpiapp:login_user' %}"> Login </a></li>
+            <li><a href="{% url 'rpiapp:register_user' %}"> Or Create Account</a></li>
             {% else %}
             {% endif %}
         </ul>

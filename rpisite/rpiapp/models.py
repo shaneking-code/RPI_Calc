@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 class League(models.Model):
 
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_leagues", null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="user_leagues", null=True)
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -11,7 +11,7 @@ class League(models.Model):
 
 class Team(models.Model):
 
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_teams", null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="user_teams", null=True)
     league = models.ForeignKey(League, on_delete=models.CASCADE, related_name="teams", null=True)
     name = models.CharField(max_length=100)
     
@@ -20,7 +20,7 @@ class Team(models.Model):
     
 class Season(models.Model):
 
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_seasons", null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="user_seasons", null=True)
     league = models.ForeignKey(League, on_delete=models.CASCADE, related_name="seasons", null=True)
     year = models.IntegerField(default=2023)
 
@@ -29,7 +29,7 @@ class Season(models.Model):
 
 class Game(models.Model):
 
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_games", null=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="user_games", null=True)
     date      = models.DateField('Date of game')
     home_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="home_games", null=True)
     away_team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="away_games", null=True)

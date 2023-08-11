@@ -21,6 +21,7 @@
     <h1><a href="{% url 'rpiapp:league_details' season.league.id %}" > {{season.league}}</a></h1>
     <h1> {{season.year}} </h1>
 
+    {% if user == season.league.created_by or user.is_superuser %}
     <form action="{% url 'rpiapp:add_game' season.league.id season.id %}" method="post">
         {% csrf_token %}
         <input type="date" name="date" min="{{season.year}}-01-01" max="{{season.year}}-12-31">
@@ -35,6 +36,8 @@
         <input type="search" list="teams" placeholder="Away Team" name="away_team">
         <input type="submit" value="Add Game">
     </form>
+    {% else %}
+    {% endif %}
 
     <h2> Standings: </h2>
     <ol>
@@ -50,10 +53,13 @@
         <ul>
             {% for game in games %}
                 <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}">{{game}}</a></li>
+                {% if user == game.league.created_by or user.is_superuser %}
                 <form action="{% url 'rpiapp:delete_game' game.league.id game.season.id game.id %}" method="post">
                     {% csrf_token %}
                     <input type="submit" value="X">
                 </form>
+                {% else %}
+                {% endif %}
             {% endfor %}
         </ul>
         {% endfor %}
