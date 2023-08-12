@@ -23,9 +23,10 @@
         <input type="text" placeholder="League name" name="league_name">
         <input type="submit" value="Add League">
     </form>
-    <h1> All Leagues: </h1>
+    <h1> Leagues: </h1>
+    <h2> Professional: </h2>
     <ul>
-        {% for league in all_leagues %}
+        {% for league in major_leagues_objs %}
         <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a></li>
         {% if user == league.created_by or user.is_superuser %}
         <form action="{% url 'rpiapp:delete_league' league.id %}" method="post">
@@ -34,6 +35,18 @@
         </form>
         {% endif %}
         {% endfor %}
+    </ul>
+    <h2> Collegiate: </h2>
+    <ul>
+        {% for league in ncaa_leagues_objs %}
+        <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a></li>
+        {% if user == league.created_by or user.is_superuser %}
+        <form action="{% url 'rpiapp:delete_league' league.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="X">
+        </form>
+        {% endif %}
+        {% endfor %}      
     </ul>
     <h1> Latest games in the database: </h1>
     {% if latest_games %}

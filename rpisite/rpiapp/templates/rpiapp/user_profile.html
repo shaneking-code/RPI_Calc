@@ -1,0 +1,36 @@
+{% extends 'rpiapp/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+{% block content %}
+<body>
+    <h1>Username: {{user.username}}</h1>
+    <h1>Email: {{user.email}}</h1>
+    <h1>Your leagues and teams: </h1>
+    <ul>
+        {% for league in  leagues %}
+        <li><a href="{% url 'rpiapp:league_details' league.id %}">{{league}}</a></li>
+        <form style="display:inline;" action="{% url 'rpiapp:delete_league' league.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="X">
+        </form>
+        <ul>
+            {% for team in teams %}
+                {% if team.league == league %}
+                <li><a href="{% url 'rpiapp:team_details' league.id team.id %}">{{team}}</a></li>
+                <form style="display:inline;" action="{% url 'rpiapp:delete_team' league.id team.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="X">
+                </form>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        {% endfor %}
+    </ul>
+</body>
+{% endblock %}
+</html>

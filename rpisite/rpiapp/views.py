@@ -7,11 +7,26 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm
+from django.views.generic import ListView
 from .models import League, Team, Season, Game
 from .utils import calc_rpi
 from .forms import RegisterForm
 # VIEWS
 # Account views
+
+class user_profile(ListView):
+    model = User
+    context_object_name = "user_created"
+    template_name = "rpiapp/user_profile.html"
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        leagues = League.objects.filter(created_by=self.request.user)
+        teams = Team.objects.filter(created_by=self.request.user)
+        context['leagues'] = leagues
+        context['teams'] = teams
+        return context
+    
 def register_user(request):
 
     if request.method == 'POST':
@@ -52,10 +67,31 @@ def index(request):
 
     # Show the most recent 5 games
     latest_games = Game.objects.all().order_by("-id")[:5]
-    all_leagues = League.objects.all()
+
+    MAJOR_LEAGUES = ["Major League Baseball", 
+                     "National Basketball Association", 
+                     "National Football League", 
+                     "National Hockey League", 
+                     ]
+    MAJOR_LEAGUES_OBJS = []
+    for league in MAJOR_LEAGUES:
+        MAJOR_LEAGUES_OBJS.append(get_object_or_404(League, name=league))
+
+    NCAA_LEAGUES = ["NCAA Baseball",
+                    "NCAA Football",
+                    "NCAA Men's Basketball", 
+                    "NCAA Women's Basketball", 
+                    "NCAA Men's Hockey",
+                    "NCAA Women's Hockey"
+                    ]
+    NCAA_LEAGUES_OBJS = []
+    for league in NCAA_LEAGUES:
+        NCAA_LEAGUES_OBJS.append(get_object_or_404(League, name=league))
+
     context = {
         "latest_games" : latest_games,
-        "all_leagues" : all_leagues,
+        "major_leagues_objs" : MAJOR_LEAGUES_OBJS,
+        "ncaa_leagues_objs" : NCAA_LEAGUES_OBJS
     }
 
     return render(request, "rpiapp/index.html", context)
@@ -81,10 +117,12 @@ def team_search(request, league_id):
     if request.method == 'POST':
         search_term = request.POST.get('search_term')
         search_results = Team.objects.filter(Q(league__id=league_id) & Q(name__contains=search_term))
+        league = get_object_or_404(League, id=league_id)
 
         context = {
             "search_term" : search_term,
-            "search_results" : search_results
+            "search_results" : search_results,
+            "league" : league
         }
 
         return render(request, "rpiapp/team_search.html", context)
@@ -101,7 +139,7 @@ def game_search(request, league_id, season_id):
         
         context = {
             "search_date" : search_date,
-            "search_results" : search_results
+            "search_results" : search_results,
         }
 
         return render(request, "rpiapp/game_search.html", context)
@@ -151,7 +189,7 @@ def delete_league(request, league_id):
         else:
             messages.error(request, "You cannot delete this league as you do not own it")
 
-    return HttpResponseRedirect(reverse('rpiapp:index'))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     
 # Get details of a team through leagues/league_id/teams/team_id
 def team_details(request, league_id, team_id):
@@ -210,7 +248,7 @@ def delete_team(request,league_id,team_id):
         else:
             messages.error(request, "You cannot delete this team as you do not own it")
 
-    return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 # Get details of a season through leagues/league_id/seasons/season_id
 def season_details(request, league_id, season_id):
@@ -293,7 +331,7 @@ def delete_season(request, league_id, season_id):
         else:
             messages.error(request, "You cannot delete this season as you do not own it")
 
-    return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     
 # Get details of a game through leagues/league_id/games/game_id
 def game_details(request, league_id, season_id, game_id):
@@ -348,5 +386,4 @@ def delete_game(request, league_id, season_id, game_id):
         else:
             messages.error(request, "You cannot delete this game as you do not own it")
 
-    return HttpResponseRedirect(reverse('rpiapp:season_details', kwargs={ "season_id" : season_id,
-                                                                          "league_id" : league_id}))
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
