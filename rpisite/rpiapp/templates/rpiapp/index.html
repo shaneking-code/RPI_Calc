@@ -23,7 +23,7 @@
         <input type="text" placeholder="League name" name="league_name">
         <input type="submit" value="Add League">
     </form>
-    <h1> Leagues: </h1>
+    <h1> Leagues </h1>
     <h2> Professional: </h2>
     <ul>
         {% for league in major_leagues_objs %}
@@ -48,7 +48,7 @@
         {% endif %}
         {% endfor %}      
     </ul>
-    <h1> Latest games in the database: </h1>
+    <h1> Latest games in the database </h1>
     {% if latest_games %}
         <ul>
             {% for game in latest_games %}

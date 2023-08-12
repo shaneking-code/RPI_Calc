@@ -185,7 +185,7 @@ def delete_league(request, league_id):
         league = get_object_or_404(League, id=league_id)
         if request.user == league.created_by or request.user.is_superuser:
             league.delete()
-            messages.success(request, f"League {league} deleted successfully")
+            messages.success(request, f"League '{league}' deleted successfully")
         else:
             messages.error(request, "You cannot delete this league as you do not own it")
 

@@ -8,9 +8,12 @@
 </head>
 {% block content %}
 <body>
-    <h1>Username: {{user.username}}</h1>
-    <h1>Email: {{user.email}}</h1>
-    <h1>Your leagues and teams: </h1>
+    {% for message in messages %}
+        <p>{{message}}</p>
+    {% endfor %}
+    <h2>Username: {{user.username}}</h2>
+    <h2>Email: {{user.email}}</h2>
+    <h2>Your leagues and teams: </h2>
     <ul>
         {% for league in  leagues %}
         <li><a href="{% url 'rpiapp:league_details' league.id %}">{{league}}</a></li>

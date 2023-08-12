@@ -11,13 +11,11 @@ h1,h2,h3 {
 }
 a {
     color: #746C70;
+    text-decoration: none;
 }
 a:hover {
-    color: red
-}
-nav {
-    background-color: #4E4F50;
-    color: #E2DED0;
+    color: red;
+    cursor: pointer;
 }
 nav ul {
     display: flex;
@@ -26,6 +24,11 @@ nav ul {
 }
 nav li {
     display: inline-block;
+    font-size: 24px;
+}
+nav li a {
+    color: #4E4F50;
+    text-decoration: underline;
 }
 ul {
     list-style : none;
