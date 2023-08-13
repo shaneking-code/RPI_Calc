@@ -17,6 +17,10 @@
     <ul>
         {% for league in  leagues %}
         <li><a href="{% url 'rpiapp:league_details' league.id %}">{{league}}</a></li>
+        <form action="{% url 'rpiapp:edit_league' league.id %}">
+            {% csrf_token %}
+            <button type="submit">Edit</button>
+        </form>
         <form style="display:inline;" action="{% url 'rpiapp:delete_league' league.id %}" method="post">
             {% csrf_token %}
             <input type="submit" value="X">
@@ -25,6 +29,10 @@
             {% for team in teams %}
                 {% if team.league == league %}
                 <li><a href="{% url 'rpiapp:team_details' league.id team.id %}">{{team}}</a></li>
+                <form action="{% url 'rpiapp:edit_team' league.id team.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Edit</button>
+                </form>
                 <form style="display:inline;" action="{% url 'rpiapp:delete_team' league.id team.id %}" method="post">
                     {% csrf_token %}
                     <input type="submit" value="X">

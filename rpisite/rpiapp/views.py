@@ -10,7 +10,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic import ListView
 from .models import League, Team, Season, Game
 from .utils import calc_rpi
-from .forms import RegisterForm
+from .forms import RegisterForm, EditLeagueForm, EditTeamForm, EditSeasonForm, EditGameForm
 # VIEWS
 # Account views
 
@@ -177,6 +177,30 @@ def add_league(request):
     
     return HttpResponseRedirect(reverse('rpiapp:index'))
 
+# Edit a league
+@login_required
+def edit_league(request, league_id):
+    league_instance = get_object_or_404(League, id=league_id)
+
+    if request.method == 'POST' and (request.user == league_instance.created_by or request.user.is_superuser):
+        form = EditLeagueForm(request.POST, instance=league_instance)
+        if form.is_valid():
+            if League.objects.all().filter(name=form.cleaned_data['name']).exists():
+                messages.error(request, "League with that name exists already")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            form.save()
+            messages.success(request, "League updated successfully")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    else:
+        form = EditLeagueForm(instance=league_instance)
+    
+    context = {
+        "form" : form,
+        "league" : league_instance
+    }
+
+    return render(request, "rpiapp/edit_league.html", context)
+    
 # Delete a league
 @login_required
 def delete_league(request, league_id):
@@ -235,6 +259,30 @@ def add_team(request,league_id):
             messages.error(request, "You cannot add this team as you do not own the league")
 
     return HttpResponseRedirect(reverse("rpiapp:league_details", args=[league_id]))
+
+@login_required
+def edit_team(request, league_id, team_id):
+
+    team_instance = get_object_or_404(Team, id=team_id)
+    if request.method == 'POST' and (request.user == team_instance.created_by or request.user.is_superuser):
+        form = EditTeamForm(request.POST, instance=team_instance)
+        if form.is_valid():
+            if Team.objects.all().filter(league__id = league_id, name=form.cleaned_data['name']).exists():
+                messages.error(request, "Team in this league with that name already exists")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            form.save()
+            messages.success(request, "Team updated successfully")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    else:
+        form = EditTeamForm(instance=team_instance)
+    
+    context = {
+        "form" : form,
+        "team" : team_instance
+    }
+
+    return render(request, "rpiapp/edit_team.html", context)
+
 
 # Delete a team
 @login_required
@@ -319,6 +367,29 @@ def add_season(request, league_id):
 
     return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_id]))
 
+@login_required
+def edit_season(request, league_id, season_id):
+    season_instance = get_object_or_404(Season, id=season_id)
+
+    if request.method == 'POST' and (request.user == season_instance.created_by or request.user.is_superuser):
+        form = EditSeasonForm(request.POST, instance=season_instance)
+        if form.is_valid():
+            if Season.objects.all().filter(league__id=league_id, year=form.cleaned_data['year']).exists():
+                messages.error(request, "Season in this league in that year exists already")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            form.save()
+            messages.success(request, "Season updated successfully")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    else:
+        form = EditSeasonForm(instance=season_instance)
+    
+    context = {
+        "form" : form,
+        "season" : season_instance
+    }
+
+    return render(request, "rpiapp/edit_season.html", context)
+
 # Delete a season
 @login_required
 def delete_season(request, league_id, season_id):
@@ -373,6 +444,25 @@ def add_game(request, league_id, season_id):
 
     return HttpResponseRedirect(reverse('rpiapp:season_details', kwargs={"season_id" : season_id,
                                                                              "league_id" : league_id}))
+@login_required
+def edit_game(request, league_id, season_id, game_id):
+    game_instance = get_object_or_404(Game, id=game_id)
+
+    if request.method == 'POST' and (game_instance.created_by == request.user or request.user.is_superuser):
+        form = EditGameForm(request.POST, instance=game_instance)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Game updated successfully")
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    else:
+        form = EditGameForm(instance=game_instance)
+    
+    context = {
+        "form" : form,
+        "game" : game_instance
+    }
+
+    return render(request, "rpiapp/edit_game.html", context)
 
 # Delete a game
 @login_required

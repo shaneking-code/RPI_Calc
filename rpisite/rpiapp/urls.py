@@ -31,6 +31,12 @@ urlpatterns = [
     path("leagues/<int:league_id>/addseason/", views.add_season, name="add_season"),
     path("leagues/<int:league_id>/seasons/<int:season_id>/addgame/", views.add_game, name="add_game"),
 
+    # Edit URLs
+    path("leagues/<int:league_id>/edit/", views.edit_league, name="edit_league"),
+    path("leagues/<int:league_id>/teams/<int:team_id>/edit/", views.edit_team, name="edit_team"),
+    path("leagues/<int:league_id>/seasons/<int:season_id>/edit/", views.edit_season, name="edit_season"),
+    path("leagues/<int:league_id>/seasons/<int:season_id>/games/<int:game_id>/edit/", views.edit_game, name="edit_game"),
+
     # Delete URLs
     path("leagues/<int:league_id>/deleteleague/", views.delete_league, name="delete_league"),
     path("leagues/<int:league_id>/teams/<int:team_id>/deleteteam/", views.delete_team, name="delete_team"),

@@ -1,0 +1,23 @@
+{% extends 'rpiapp/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+{% block content %}
+<body>
+    {% for message in messages %}
+        <p>{{message}}</p>
+    {% endfor %}
+    <h2> Editing Team: {{team}} </h2>
+    <form action="{% url 'rpiapp:edit_team' team.league.id team.id %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+    <a href="{% url 'rpiapp:user_profile' request.user.id %}">Back to user profile</a><span> or </span><a href="{% url 'rpiapp:league_details' team.league.id %}">League</a>
+</body>
+{% endblock %}
+</html>

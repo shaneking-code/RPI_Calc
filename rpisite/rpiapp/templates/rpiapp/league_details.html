@@ -43,6 +43,10 @@
             {% for season in league_seasons %}
                 <li><a href="{% url 'rpiapp:season_details' season.league.id season.id %}" > {{season.year}} Season</a>
                     {% if user == league.created_by or user.is_superuser %}
+                    <form action="{% url 'rpiapp:edit_season' league.id season.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Edit</button>
+                    </form>
                     <form style="display:inline;" action="{% url 'rpiapp:delete_season' season.league.id season.id %}" method="post">
                         {% csrf_token %}
                         <input type="submit" value="X">
@@ -62,6 +66,10 @@
             {% for team in league_teams %}
                 <li><a href="{% url 'rpiapp:team_details' team.league.id team.id %}" > {{team.name}}</a>
                     {% if user == league.created_by or user.is_superuser %}
+                    <form action="{% url 'rpiapp:edit_team' league.id team.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Edit</button>
+                    </form>
                     <form style="display:inline;" action="{% url 'rpiapp:delete_team' team.league.id team.id %}" method="post">
                         {% csrf_token %}
                             <input type="submit" value="X">

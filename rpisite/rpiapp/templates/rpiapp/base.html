@@ -8,19 +8,19 @@
     <title>Document</title>
 </head>
 <body>
-    <nav>
+    <header>
         <ul>
-            <li><a href="{% url 'rpiapp:index' %}"> Home </a></li>
-            <li><a href="https://github.com/shaneking-code" target="_blank"> Github </a></li>
+            <li class="active"><a class="header-a" href="{% url 'rpiapp:index' %}"> Home </a></li>
+            <li><a class="header-a" href="https://github.com/shaneking-code" target="_blank"> Github </a></li>
             {% if user.is_authenticated %}
-            <li><a href="{% url 'rpiapp:user_profile' user.id %}">{{user.username}}</a></li>
-            <li><a href="{% url 'rpiapp:logout_user' %}"> Logout </a></li>
+            <li><a class="header-a" href="{% url 'rpiapp:user_profile' user.id %}">{{user.username}}</a></li>
+            <li><a class="header-a" href="{% url 'rpiapp:logout_user' %}"> Logout </a></li>
             {% elif request.path != "/rpiapp/login/" %}
-            <li><a href="{% url 'rpiapp:login_user' %}"> Login </a><span>or </span><a href="{% url 'rpiapp:register_user' %}">Create account</a></li>
+            <li><a class="header-a" href="{% url 'rpiapp:login_user' %}">Login</a><span> or </span><a href="{% url 'rpiapp:register_user' %}">Create account</a></li>
             {% else %}
             {% endif %}
         </ul>
-    </nav>
+    </header>
     {% block content %}{% endblock %}
     <footer>
         Created by Shane K - <script>document.write(new Date().getFullYear())</script>

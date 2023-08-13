@@ -54,6 +54,9 @@
             {% for game in games %}
                 <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}">{{game}}</a></li>
                 {% if user == game.league.created_by or user.is_superuser %}
+                <form action="{% url 'rpiapp:edit_game' game.league.id game.season.id game.id %}">
+                    <button type="submit">Edit</button>
+                </form>
                 <form action="{% url 'rpiapp:delete_game' game.league.id game.season.id game.id %}" method="post">
                     {% csrf_token %}
                     <input type="submit" value="X">
