@@ -8,10 +8,6 @@
 </head>
 {% block content %}
 <body>
-    {% for message in messages %}
-        <p> {{message}} </p>
-    {% endfor %}
-
     <h1> {{league}} </h1>
 
     <h2> Team Search: </h2>
@@ -23,17 +19,18 @@
 
     {% if user == league.created_by or user.superuser %}
     <h2> Add Season: </h2>
-    <form action="{% url 'rpiapp:add_season' league.id %}" method="post">
+    <form method="post">
         {% csrf_token %}
-        <input type="number" min="1850" max="2024" placeholder="2023" name="year">
-        <input type="submit" value="Add Season">
+        {{add_season_form.as_p}}
+        <button type="submit" name="add_season">Add Season</button>
     </form>
     <h2> Add Team: </h2>
-    <form action="{% url 'rpiapp:add_team' league.id %}" method="post">
+    <form method="post">
         {% csrf_token %}
-        <input type="text" placeholder="Team Name" name="team_name">
-        <input type="submit" value="Add Team">
+        {{add_team_form.as_p}}
+        <button type="submit" name="add_team">Add Team</button>
     </form>
+
     {% else %}
     {% endif %}
 

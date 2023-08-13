@@ -8,9 +8,6 @@
 </head>
 <body>
 {% block content %}
-    {% for message in messages %}
-        <p>{{message}}</p>
-    {% endfor %}
     <form action="{% url 'rpiapp:login_user' %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}

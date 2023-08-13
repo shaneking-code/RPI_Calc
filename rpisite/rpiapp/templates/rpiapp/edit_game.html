@@ -8,9 +8,6 @@
 </head>
 {% block content %}
 <body>
-    {% for message in messages %}
-        <p>{{message}}</p>
-    {% endfor %}
     <h2> Editing Game: {{game}} </h2>
     <form action="{% url 'rpiapp:edit_game' game.league.id game.season.id game.id %}" method="post">
         {% csrf_token %}

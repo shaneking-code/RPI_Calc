@@ -1,4 +1,5 @@
 from django.urls import path
+from django.contrib.auth.decorators import login_required
 from . import views
 from rpiapp.views import user_profile
 
@@ -9,8 +10,8 @@ urlpatterns = [
     path("register/", views.register_user, name="register_user"),
     path("login/", views.login_user, name="login_user"),
     path("logout/", views.logout_user, name="logout_user"),
-    path("userprofile/<int:user_id>/", user_profile.as_view(), name="user_profile"),
-
+    path("userprofile/<int:user_id>/", login_required(user_profile.as_view()), name="user_profile"),
+    path("userprofile/<int:user_id>/edit/", views.edit_profile, name="edit_profile"),
     # Index URL
     path("", views.index, name="index"),
 
@@ -24,12 +25,6 @@ urlpatterns = [
     path("leagues/<int:league_id>/teams/<int:team_id>/", views.team_details, name="team_details"),
     path("leagues/<int:league_id>/seasons/<int:season_id>/", views.season_details, name="season_details"),
     path("leagues/<int:league_id>/seasons/<int:season_id>/games/<int:game_id>/", views.game_details, name="game_details"),
-
-    # Add URLs
-    path("addleague/", views.add_league, name="add_league"),
-    path("leagues/<int:league_id>/addteam/", views.add_team, name="add_team"),
-    path("leagues/<int:league_id>/addseason/", views.add_season, name="add_season"),
-    path("leagues/<int:league_id>/seasons/<int:season_id>/addgame/", views.add_game, name="add_game"),
 
     # Edit URLs
     path("leagues/<int:league_id>/edit/", views.edit_league, name="edit_league"),

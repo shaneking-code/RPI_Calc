@@ -26,6 +26,13 @@ header {
     display: flex;
 
 }
+p.success {
+    color: greenyellow;
+}
+p.error {
+    color: red;
+    text-decoration: underline;
+}
 footer {
     background-color: var(--main-dark-grey);
     color: var(--main-tan);

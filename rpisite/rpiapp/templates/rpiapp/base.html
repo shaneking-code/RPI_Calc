@@ -21,6 +21,11 @@
             {% endif %}
         </ul>
     </header>
+    <div class="messages">
+        {% for message in messages %}
+            <p class="{{message.tags}}">{{message}}</p>
+        {% endfor %}
+    </div>
     {% block content %}{% endblock %}
     <footer>
         Created by Shane K - <script>document.write(new Date().getFullYear())</script>
