@@ -12,5 +12,5 @@ class TeamAdmin(admin.ModelAdmin):
 
 @admin.register(Season)
 class SeasonAdmin(admin.ModelAdmin):
-    fields = ["year","league"]
+    fields = ["start_date","end_date","league"]
 

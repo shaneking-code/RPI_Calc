@@ -9,7 +9,7 @@
 {% block content %}
 <body>
     <section>
-        <h1><a href="{% url 'rpiapp:league_details' season.league.id %}" > {{season.league}}'s</a> {{season.year}} Season </h1>
+        <h1><a href="{% url 'rpiapp:league_details' season.league.id %}" > {{season.league}}'s</a> {{season.name}} Season </h1>
 
         {% if user == season.league.created_by or user.is_superuser %}
         <form method="post">
@@ -33,7 +33,7 @@
     <section>
         <form action="{% url 'rpiapp:game_search' season.league.id season.id %}" method="post">
             {% csrf_token %}
-            <input type="date" name="date" min="{{season.year}}-01-01" max="{{season.year}}-12-31">
+            <input type="date" name="date" min="{{season.start_date}}" max="{{season.end_date}}">
             <button type="submit">Search for games on date</button>
         </form>
         <h2> Games: </h2>

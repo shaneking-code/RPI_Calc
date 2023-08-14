@@ -25,13 +25,15 @@ class Season(models.Model):
 
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="user_seasons", null=True)
     league = models.ForeignKey(League, on_delete=models.CASCADE, related_name="seasons", null=True)
-    year = models.IntegerField(default=2023)
+    start_date = models.DateField('Start date of season', null=True)
+    end_date = models.DateField('End date of season', null=True)
+    name = models.CharField(max_length=100, null=True)
 
     class Meta:
-        unique_together = ('league', 'year')
+        unique_together = ('league', 'name')
         
     def __str__(self):
-        return (f"{self.league}'s {self.year} Season")
+        return (f"{self.name}")
 
 class Game(models.Model):
 

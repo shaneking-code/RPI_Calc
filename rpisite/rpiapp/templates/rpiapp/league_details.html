@@ -24,7 +24,9 @@
         <form method="post">
             {% csrf_token %}
             <span style="display:inline;">
-                {{add_season_form.year}}
+                <table>
+                    {{add_season_form.as_table}}
+                </table>
                 <button type="submit" name="add_season">Add Season</button>
             </span>
         </form>
@@ -45,7 +47,7 @@
         {% if league_seasons %}
             <ul>
                 {% for season in league_seasons %}
-                    <li><a href="{% url 'rpiapp:season_details' season.league.id season.id %}" > {{season.year}} Season</a>
+                    <li><a href="{% url 'rpiapp:season_details' season.league.id season.id %}" > {{season.name}} Season</a><p style="display:inline;"> ({{season.start_date}} - {{season.end_date}}) </p>
                         {% if user == league.created_by or user.is_superuser %}
                         <form action="{% url 'rpiapp:edit_season' league.id season.id %}">
                             {% csrf_token %}

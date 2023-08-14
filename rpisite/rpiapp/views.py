@@ -13,6 +13,7 @@ from .models import League, Team, Season, Game
 from .utils import calc_rpi
 from .forms import *
 import csv
+import json
 import datetime
 
 # VIEWS
@@ -193,7 +194,7 @@ def game_search(request, league_id, season_id):
 def league_details(request, league_id):
 
     league = get_object_or_404(League, id=league_id)
-    league_seasons = league.seasons.all().order_by("-year")
+    league_seasons = league.seasons.all().order_by("-start_date")
     league_teams = league.teams.all().order_by("name")
     add_team_form = AddTeamForm()
     add_season_form = AddSeasonForm()
@@ -213,9 +214,9 @@ def league_details(request, league_id):
         if 'add_season' in request.POST:
             add_season_form = AddSeasonForm(request.POST)
             if add_season_form.is_valid():
-                if Season.objects.filter(league=league, year=add_season_form.cleaned_data['year']).exists():
+                if Season.objects.filter(league=league, name=add_season_form.cleaned_data['name']).exists():
                     print("YAYAYAYAYAYAYAYAYA")
-                    messages.error(request, "Season with this year in this league exists already")
+                    messages.error(request, "Season with this name in this league exists already")
                     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
                 season = add_season_form.save()
                 season.league = league
@@ -281,7 +282,7 @@ def team_details(request, league_id, team_id):
 
     team = get_object_or_404(Team, id=team_id)
     team_games = team.home_games.all() | team.away_games.all()
-    team_games = team_games.order_by("-season__year")
+    team_games = team_games.order_by("-season__start_date")
 
     team_games_by_season = {}
     for game in team_games:
@@ -385,6 +386,10 @@ def season_details(request, league_id, season_id):
     if request.method == 'POST':
         add_game_form = AddGameForm(request.POST, season=season)
         if add_game_form.is_valid():
+            date = add_game_form.cleaned_data['date']
+            if date < season.start_date or date > season.end_date:
+                messages.error(request, f"Game outside of date range ({season.start_date})-({season.end_date})")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             game = add_game_form.save(commit=False)
             game.created_by = request.user
             game.league = league
@@ -413,8 +418,8 @@ def edit_season(request, league_id, season_id):
     if request.method == 'POST' and (request.user == season_instance.created_by or request.user.is_superuser):
         form = EditSeasonForm(request.POST, instance=season_instance)
         if form.is_valid():
-            if Season.objects.all().filter(league__id=league_id, year=form.cleaned_data['year']).exists():
-                messages.error(request, "Season in this league in that year exists already")
+            if Season.objects.all().filter(league__id=league_id, name=form.cleaned_data['name']).exists():
+                messages.error(request, "Season in this league with that name exists already")
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             form.save()
             messages.success(request, "Season updated successfully")
@@ -437,7 +442,7 @@ def delete_season(request, league_id, season_id):
         season = get_object_or_404(Season, id=season_id)
         if request.user == season.created_by or request.user.is_superuser:
             season.delete()
-            messages.success(request, f"Season deleted successfully: {season.year}")
+            messages.success(request, f"Season deleted successfully: {season.name}")
         else:
             messages.error(request, "You cannot delete this season as you do not own it")
 
@@ -461,6 +466,10 @@ def edit_game(request, league_id, season_id, game_id):
     if request.method == 'POST' and (game_instance.created_by == request.user or request.user.is_superuser):
         form = EditGameForm(request.POST, instance=game_instance)
         if form.is_valid():
+            date = form.cleaned_data['date']
+            if date < game_instance.season.start_date or date > game_instance.season.end_date:
+                messages.error(request, f"Game outside of date range ({game_instance.season.start_date})-({game_instance.season.end_date})")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             form.save()
             messages.success(request, "Game updated successfully")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -502,8 +511,8 @@ def bulk_game_upload(request, league_id, season_id):
         next(games_csv_reader)
         for row in games_csv_reader:
             date = datetime.datetime.strptime(row[0], '%m/%d/%Y').date()
-            if date.year != season.year:
-                messages.error(request, f"Contains game outside of year {season.year}")
+            if date < season.start_date or date > season.end_date:
+                messages.error(request, f"Contains game outside of date range ({season.start_date})-({season.end_date})")
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             home_team, ht_created = Team.objects.get_or_create(name=row[3], league=league, created_by=request.user)
             away_team, at_created = Team.objects.get_or_create(name=row[4], league=league, created_by=request.user)

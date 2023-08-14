@@ -27,13 +27,18 @@ class AddTeamForm(forms.ModelForm):
 class AddSeasonForm(forms.ModelForm):
     class Meta:
         model = Season
-        fields = ['year',]
+        fields = ['start_date','end_date','name']
+    
+    def __init__(self, *args, **kwargs):
+        super(AddSeasonForm, self).__init__(*args, **kwargs)
+        self.fields['start_date'] = forms.DateField(widget=forms.widgets.SelectDateWidget())
+        self.fields['end_date'] = forms.DateField(widget=forms.widgets.SelectDateWidget())
 
 class AddGameForm(forms.ModelForm):
 
     def __init__(self, *args, season, **kwargs):
         super(AddGameForm, self).__init__(*args, **kwargs)
-        self.fields['date'].widget = forms.SelectDateWidget(years=range(season.year, season.year+1))
+        self.fields['date'].widget = forms.SelectDateWidget(years=range(season.start_date.year, season.end_date.year+1))
         self.fields['winner'].queryset = Team.objects.filter(league=season.league)
         self.fields['loser'].queryset = Team.objects.filter(league=season.league)
         self.fields['home_team'].queryset = Team.objects.filter(league=season.league)
@@ -67,7 +72,7 @@ class EditGameForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         instance = kwargs['instance']
         super(EditGameForm, self).__init__(*args, **kwargs)
-        self.fields['date'] = forms.DateField(widget=forms.widgets.SelectDateWidget(years=range(instance.season.year, instance.season.year+1)))
+        self.fields['date'] = forms.DateField(widget=forms.widgets.SelectDateWidget(years=range(instance.season.start_date.year, instance.season.end_date.year+1)))
         self.fields['winner'].queryset = instance.season.league.teams.all()
         self.fields['loser'].queryset = instance.season.league.teams.all()
         self.fields['home_team'].queryset = instance.season.league.teams.all()
