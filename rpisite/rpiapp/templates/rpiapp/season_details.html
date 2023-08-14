@@ -49,7 +49,7 @@
                     </form>
                     <form action="{% url 'rpiapp:delete_game' game.league.id game.season.id game.id %}" method="post">
                         {% csrf_token %}
-                        <input type="submit" value="X">
+                        <button type="submit">Delete</button>
                     </form>
                     {% else %}
                     {% endif %}
