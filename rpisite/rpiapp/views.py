@@ -13,7 +13,6 @@ from .models import League, Team, Season, Game
 from .utils import calc_rpi
 from .forms import *
 import csv
-import json
 import datetime
 
 # VIEWS
