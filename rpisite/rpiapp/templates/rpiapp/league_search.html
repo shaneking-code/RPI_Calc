@@ -8,16 +8,18 @@
 </head>
 {% block content %}
 <body>
-    <h1> Search results for : "{{search_term}}"</h1>
-    {% if search_results %}
-    <ul>
-        {% for league in search_results %}
-            <li><a href="{% url 'rpiapp:league_details' league.id %}"> {{league.name}} </a></li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <p> No leagues with name containing: "{{search_term}}" </p>
-    {% endif %}
+    <section>
+        <h1> Search results for : "{{search_term}}"</h1>
+        {% if search_results %}
+        <ul>
+            {% for league in search_results %}
+                <li><a href="{% url 'rpiapp:league_details' league.id %}"> {{league.name}} </a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p> No leagues with name containing: "{{search_term}}" </p>
+        {% endif %}
+    </section>
 </body>
 {% endblock %}
 </html>

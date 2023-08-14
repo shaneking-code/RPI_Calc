@@ -39,7 +39,11 @@ ul {
     list-style-type: none;
     padding: 0;
 }
-
+ul ul {
+    list-style-type:circle;
+    padding: 5px;
+    margin-left: 40px;
+}
 li {
     margin-bottom: 10px;
 }
@@ -55,7 +59,11 @@ form {
     margin-right: 10px;
 }
 
-input[type="search"], input[type="text"], input[type="number"], input[type="date"] {
+input[type="search"],
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="file"] {
     padding: 5px;
     border: 1px solid #746C70;
     border-radius: 5px;

@@ -8,21 +8,23 @@
 </head>
 {% block content %}
 <body>
-    <h1>{{team.name}}'s Games: </h1>
-    {% if team_games_by_season %}
-        <ul>
-            {% for season,record in team_games_by_season.items %}
-            <li>{{season}} Games (Record: {{record.wins}}-{{record.losses}})</li>
+    <section>
+        <h1>{{team.name}}'s Games: </h1>
+        {% if team_games_by_season %}
             <ul>
-                {% for game in record.games %}
-                    <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}" > {{game}} </a></li>
+                {% for season,record in team_games_by_season.items %}
+                <li>{{season}} Games (Record: {{record.wins}}-{{record.losses}})</li>
+                <ul>
+                    {% for game in record.games %}
+                        <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}" > {{game}} </a></li>
+                    {% endfor %}
+                </ul>
                 {% endfor %}
             </ul>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p> No games played... </p>
-    {% endif %}
+        {% else %}
+            <p> No games played... </p>
+        {% endif %}
+    </section>  
 </body>
 {% endblock %}
 </html>

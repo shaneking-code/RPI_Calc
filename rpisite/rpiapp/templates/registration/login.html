@@ -8,11 +8,13 @@
 </head>
 <body>
 {% block content %}
-    <form action="{% url 'rpiapp:login_user' %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Log In">
-    </form>
+    <section>
+        <form action="{% url 'rpiapp:login_user' %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Log In</button>
+        </form>
+    </section>
 {% endblock %}
 </body>
 </html>

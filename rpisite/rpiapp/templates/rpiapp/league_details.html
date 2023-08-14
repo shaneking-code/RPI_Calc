@@ -8,7 +8,9 @@
 </head>
 {% block content %}
 <body>
-    <h2> {{league}} </h2>
+    <section>
+        <h1> {{league}} </h1>
+    </section>
     <section>
         <h3> Team Search: </h3>
         <form action="{% url 'rpiapp:team_search' league.id %}" method="post">

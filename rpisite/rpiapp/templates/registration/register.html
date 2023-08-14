@@ -8,11 +8,13 @@
 </head>
 {% block content %}
 <body>
-    <form action="{% url 'rpiapp:register_user' %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Create account">
-    </form>
+    <section>
+        <form action="{% url 'rpiapp:register_user' %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Create account</button>
+        </form>
+    </section>
 </body>
 {% endblock %}
 </html>

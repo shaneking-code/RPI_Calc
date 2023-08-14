@@ -8,13 +8,17 @@
 </head>
 {% block content %}
 <body>
-    <h2> Editing Season: {{season}} </h2>
-    <form action="{% url 'rpiapp:edit_season' season.league.id season.id %}" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" value="Submit">
-    </form>
-    <a href="{% url 'rpiapp:league_details' season.league.id %}">Back to league</a>  
+    <section>
+        <h2> Editing Season: {{season}} </h2>
+        <form action="{% url 'rpiapp:edit_season' season.league.id season.id %}" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Submit">
+        </form>
+    </section>
+    <section>
+        <a href="{% url 'rpiapp:league_details' season.league.id %}">Back to league</a>
+    </section>  
 </body>
 {% endblock %}
 </html>

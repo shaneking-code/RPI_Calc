@@ -506,10 +506,10 @@ def bulk_game_upload(request, league_id, season_id):
             if date.year != season.year:
                 messages.error(request, f"Contains game outside of year {season.year}")
                 return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-            home_team, ht_created = Team.objects.get_or_create(name=row[3], league=league)
-            away_team, at_created = Team.objects.get_or_create(name=row[4], league=league)
-            winner, w_created = Team.objects.get_or_create(name=row[1], league=league)
-            loser, l_created = Team.objects.get_or_create(name=row[2], league=league)
+            home_team, ht_created = Team.objects.get_or_create(name=row[3], league=league, created_by=request.user)
+            away_team, at_created = Team.objects.get_or_create(name=row[4], league=league, created_by=request.user)
+            winner, w_created = Team.objects.get_or_create(name=row[1], league=league, created_by=request.user)
+            loser, l_created = Team.objects.get_or_create(name=row[2], league=league, created_by=request.user)
             created_by = request.user
             game = Game.objects.create(
                 created_by = created_by,

@@ -8,38 +8,42 @@
 </head>
 {% block content %}
 <body>
-    <h2>Username: {{user.username}}</h2>
-    <h2>Email: {{user.email}}</h2>
-    <a href="{% url 'rpiapp:edit_profile' user.id %}">Edit Profile</a>
-    <h2>Your leagues and teams: </h2>
-    <ul>
-        {% for league in  leagues %}
-        <li><a href="{% url 'rpiapp:league_details' league.id %}">{{league}}</a></li>
-        <form action="{% url 'rpiapp:edit_league' league.id %}">
-            {% csrf_token %}
-            <button type="submit">Edit</button>
-        </form>
-        <form style="display:inline;" action="{% url 'rpiapp:delete_league' league.id %}" method="post">
-            {% csrf_token %}
-            <input type="submit" value="X">
-        </form>
+    <section>
+        <h2>Username:</h2><p> {{user.username}}</p>
+        <h2>Email: </h2><p>{{user.email}}</p>
+        <h2><a href="{% url 'rpiapp:edit_profile' user.id %}">Edit Profile</a></h2>
+    </section>
+    <section>
+        <h2>Your leagues and teams: </h2>
         <ul>
-            {% for team in teams %}
-                {% if team.league == league %}
-                <li><a href="{% url 'rpiapp:team_details' league.id team.id %}">{{team}}</a></li>
-                <form action="{% url 'rpiapp:edit_team' league.id team.id %}">
-                    {% csrf_token %}
-                    <button type="submit">Edit</button>
-                </form>
-                <form style="display:inline;" action="{% url 'rpiapp:delete_team' league.id team.id %}" method="post">
-                    {% csrf_token %}
-                    <input type="submit" value="X">
-                </form>
-                {% endif %}
+            {% for league in  leagues %}
+            <li>League: <a href="{% url 'rpiapp:league_details' league.id %}">{{league}}</a></li>
+            <form action="{% url 'rpiapp:edit_league' league.id %}">
+                {% csrf_token %}
+                <button type="submit">Edit</button>
+            </form>
+            <form style="display:inline;" action="{% url 'rpiapp:delete_league' league.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+            <ul>
+                {% for team in teams %}
+                    {% if team.league == league %}
+                    <li>Team: <a href="{% url 'rpiapp:team_details' league.id team.id %}">{{team}}</a></li>
+                    <form action="{% url 'rpiapp:edit_team' league.id team.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Edit</button>
+                    </form>
+                    <form style="display:inline;" action="{% url 'rpiapp:delete_team' league.id team.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Delete</button>
+                    </form>
+                    {% endif %}
+                {% endfor %}
+            </ul>
             {% endfor %}
         </ul>
-        {% endfor %}
-    </ul>
+    </section>
 </body>
 {% endblock %}
 </html>

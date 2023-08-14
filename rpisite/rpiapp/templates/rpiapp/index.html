@@ -8,56 +8,61 @@
 </head>
 {% block content %}
 <body>
-    <h2> Search for League: </h2>
-    <form action="{% url 'rpiapp:league_search' %}" method="post">
-        {% csrf_token %}
-        <input type="search" placeholder="League name" name="search_term">
-        <button type="submit">Search for League</button>
-    </form>
-    {% if user.is_authenticated %}
-    <h2> Add League: </h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ add_league_form.as_p }}
-        <button type="submit">Add League</button>
-    </form>
-    {% endif %}
-    <h1> Leagues </h1>
-    <h2> Professional: </h2>
-    <ul>
-        {% for league in major_leagues_objs %}
-        <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a></li>
-        {% if user == league.created_by or user.is_superuser %}
-        <form action="{% url 'rpiapp:delete_league' league.id %}" method="post">
+    <section>
+        <h2> Search for League: </h2>
+        <form action="{% url 'rpiapp:league_search' %}" method="post">
             {% csrf_token %}
-            <input type="submit" value="X">
+            <input type="search" placeholder="League name" name="search_term">
+            <button type="submit">Search for League</button>
+        </form>
+        {% if user.is_authenticated %}
+        <h2> Add League: </h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ add_league_form.as_p }}
+            <button type="submit">Add League</button>
         </form>
         {% endif %}
-        {% endfor %}
-    </ul>
-    <h2> Collegiate: </h2>
-    <ul>
-        {% for league in ncaa_leagues_objs %}
-        <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a></li>
-        {% if user == league.created_by or user.is_superuser %}
-        <form action="{% url 'rpiapp:delete_league' league.id %}" method="post">
-            {% csrf_token %}
-            <input type="submit" value="X">
-        </form>
-        {% endif %}
-        {% endfor %}      
-    </ul>
-
-    <h1> Latest games in the database </h1>
-    {% if latest_games %}
+    </section>
+    <section>
+        <h1> Leagues </h1>
+        <h2> Professional: </h2>
         <ul>
-            {% for game in latest_games %}
-                <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}" > {{game}}</a></li>
+            {% for league in major_leagues_objs %}
+            <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a></li>
+            {% if user == league.created_by or user.is_superuser %}
+            <form action="{% url 'rpiapp:delete_league' league.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+            {% endif %}
             {% endfor %}
         </ul>
-    {% else %}
-        <p> No recent games available... </p>
-    {% endif %}
+        <h2> Collegiate: </h2>
+        <ul>
+            {% for league in ncaa_leagues_objs %}
+            <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a></li>
+            {% if user == league.created_by or user.is_superuser %}
+            <form action="{% url 'rpiapp:delete_league' league.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+            {% endif %}
+            {% endfor %}      
+        </ul>
+    </section>
+    <section>
+        <h1> Latest games in the database </h1>
+        {% if latest_games %}
+            <ul>
+                {% for game in latest_games %}
+                    <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}" > {{game}}</a></li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p> No recent games available... </p>
+        {% endif %}
+    </section>
 </body>
 {% endblock %}
 </html>

@@ -8,55 +8,57 @@
 </head>
 {% block content %}
 <body>
-    <form action="{% url 'rpiapp:game_search' season.league.id season.id %}" method="post">
-        {% csrf_token %}
-        <input type="date" name="date" min="{{season.year}}-01-01" max="{{season.year}}-12-31">
-        <input type="submit" value="Search for games on date">
-    </form>
+    <section>
+        <h1><a href="{% url 'rpiapp:league_details' season.league.id %}" > {{season.league}}'s</a> {{season.year}} Season </h1>
 
-    <h1><a href="{% url 'rpiapp:league_details' season.league.id %}" > {{season.league}}</a></h1>
-    <h1> {{season.year}} </h1>
-
-    {% if user == season.league.created_by or user.is_superuser %}
-    <form method="post">
-        {% csrf_token %}
-        <table>{{ add_game_form.as_table }}</table>
-        <br>
-        <button type="submit">Add Game</button>
-    </form>
-    {% else %}
-    {% endif %}
-    
-    <a href="{% url 'rpiapp:bulk_game_upload' season.league.id season.id %}">Or upload games in bulk</a>
-
-    <h2> Standings: </h2>
-    <ol>
-        {% for rpi,team in rpis_by_team %}
-            <li>{{team}}'s RPI: {{rpi}}</li>
-        {% endfor %}
-    </ol>
-    
-    <h2> Games: </h2>
-    <ul>
-        {% for date, games in season_games_by_date.items %}
-        <li>{{date}}</li>
+        {% if user == season.league.created_by or user.is_superuser %}
+        <form method="post">
+            {% csrf_token %}
+            <table>{{ add_game_form.as_table }}</table>
+            <br>
+            <button type="submit">Add Game</button>
+        </form>
+        <a href="{% url 'rpiapp:bulk_game_upload' season.league.id season.id %}">Or upload games in bulk</a>
+        {% else %}
+        {% endif %}
+    </section>
+    <section>
+        <h2> Standings: </h2>
+        <ol>
+            {% for rpi,team in rpis_by_team %}
+                <li>{{team}}'s RPI: {{rpi}}</li>
+            {% endfor %}
+        </ol>
+    </section>
+    <section>
+        <form action="{% url 'rpiapp:game_search' season.league.id season.id %}" method="post">
+            {% csrf_token %}
+            <input type="date" name="date" min="{{season.year}}-01-01" max="{{season.year}}-12-31">
+            <button type="submit">Search for games on date</button>
+        </form>
+        <h2> Games: </h2>
         <ul>
-            {% for game in games %}
-                <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}">{{game}}</a></li>
-                {% if user == game.league.created_by or user.is_superuser %}
-                <form action="{% url 'rpiapp:edit_game' game.league.id game.season.id game.id %}">
-                    <button type="submit">Edit</button>
-                </form>
-                <form action="{% url 'rpiapp:delete_game' game.league.id game.season.id game.id %}" method="post">
-                    {% csrf_token %}
-                    <input type="submit" value="X">
-                </form>
-                {% else %}
-                {% endif %}
+            {% for date, games in season_games_by_date.items %}
+            <li>{{date}}</li>
+            <ul>
+                {% for game in games %}
+                    <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}">{{game}}</a></li>
+                    {% if user == game.league.created_by or user.is_superuser %}
+                    <form action="{% url 'rpiapp:edit_game' game.league.id game.season.id game.id %}">
+                        <button type="submit">Edit</button>
+                    </form>
+                    <form action="{% url 'rpiapp:delete_game' game.league.id game.season.id game.id %}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" value="X">
+                    </form>
+                    {% else %}
+                    {% endif %}
+                {% endfor %}
+            </ul>
             {% endfor %}
         </ul>
-        {% endfor %}
-    </ul>
+    </section>
+
 </body>
 {% endblock %}
 </html>
