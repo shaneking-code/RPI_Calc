@@ -26,6 +26,8 @@
     </form>
     {% else %}
     {% endif %}
+    
+    <a href="{% url 'rpiapp:bulk_game_upload' season.league.id season.id %}">Or upload games in bulk</a>
 
     <h2> Standings: </h2>
     <ol>

@@ -37,4 +37,7 @@ urlpatterns = [
     path("leagues/<int:league_id>/teams/<int:team_id>/deleteteam/", views.delete_team, name="delete_team"),
     path("leagues/<int:league_id>/seasons/<int:season_id>/deleteseason/", views.delete_season, name="delete_season"),
     path("leagues/<int:league_id>/seasons/<int:season_id>/games/<int:game_id>/deletegame/", views.delete_game, name="delete_game"),
+
+    # Add Games through File
+    path("leagues/<int:league_id>/seasons/<int:season_id>/addgames/", views.bulk_game_upload, name="bulk_game_upload")
 ]

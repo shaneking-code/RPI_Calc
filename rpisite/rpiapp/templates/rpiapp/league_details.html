@@ -8,77 +8,84 @@
 </head>
 {% block content %}
 <body>
-    <h1> {{league}} </h1>
+    <h2> {{league}} </h2>
+    <section>
+        <h3> Team Search: </h3>
+        <form action="{% url 'rpiapp:team_search' league.id %}" method="post">
+            {% csrf_token %}
+            <input type="search" placeholder="Team name" name="search_term">
+            <button type="submit">Search for team</button>
+        </form>
 
-    <h2> Team Search: </h2>
-    <form action="{% url 'rpiapp:team_search' league.id %}" method="post">
-        {% csrf_token %}
-        <input type="search" placeholder="Team name" name="search_term">
-        <input type="submit" value="Search for team">
-    </form>
+        {% if user == league.created_by or user.superuser %}
+        <h3> Add Season: </h3>
+        <form method="post">
+            {% csrf_token %}
+            <span style="display:inline;">
+                {{add_season_form.year}}
+                <button type="submit" name="add_season">Add Season</button>
+            </span>
+        </form>
+        <h2> Add Team: </h2>
+        <form method="post">
+            {% csrf_token %}
+            <span style="display:inline;">
+                {{add_team_form.name}}
+                <button type="submit" name="add_team">Add Team</button>
+            </span>
+        </form>
 
-    {% if user == league.created_by or user.superuser %}
-    <h2> Add Season: </h2>
-    <form method="post">
-        {% csrf_token %}
-        {{add_season_form.as_p}}
-        <button type="submit" name="add_season">Add Season</button>
-    </form>
-    <h2> Add Team: </h2>
-    <form method="post">
-        {% csrf_token %}
-        {{add_team_form.as_p}}
-        <button type="submit" name="add_team">Add Team</button>
-    </form>
-
-    {% else %}
-    {% endif %}
-
-    <h1>{{league.name}}'s Seasons</h1>
-    {% if league_seasons %}
-        <ul>
-            {% for season in league_seasons %}
-                <li><a href="{% url 'rpiapp:season_details' season.league.id season.id %}" > {{season.year}} Season</a>
-                    {% if user == league.created_by or user.is_superuser %}
-                    <form action="{% url 'rpiapp:edit_season' league.id season.id %}">
-                        {% csrf_token %}
-                        <button type="submit">Edit</button>
-                    </form>
-                    <form style="display:inline;" action="{% url 'rpiapp:delete_season' season.league.id season.id %}" method="post">
-                        {% csrf_token %}
-                        <input type="submit" value="X">
-                    </form>
-                    {% else %}
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p> No seasons in database... </p>
-    {% endif %}
-    
-    <h1>{{league.name}}'s Teams </h1>
-    {% if league_teams %}
-        <ul>
-            {% for team in league_teams %}
-                <li><a href="{% url 'rpiapp:team_details' team.league.id team.id %}" > {{team.name}}</a>
-                    {% if user == league.created_by or user.is_superuser %}
-                    <form action="{% url 'rpiapp:edit_team' league.id team.id %}">
-                        {% csrf_token %}
-                        <button type="submit">Edit</button>
-                    </form>
-                    <form style="display:inline;" action="{% url 'rpiapp:delete_team' team.league.id team.id %}" method="post">
-                        {% csrf_token %}
-                            <input type="submit" value="X">
-                    </form>
-                    {% else %}
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p> No teams in league... </p>
-    {% endif %}
+        {% else %}
+        {% endif %}
+    </section>
+    <section>
+        <h2><u>Seasons</u>:</h2>
+        {% if league_seasons %}
+            <ul>
+                {% for season in league_seasons %}
+                    <li><a href="{% url 'rpiapp:season_details' season.league.id season.id %}" > {{season.year}} Season</a>
+                        {% if user == league.created_by or user.is_superuser %}
+                        <form action="{% url 'rpiapp:edit_season' league.id season.id %}">
+                            {% csrf_token %}
+                            <button type="submit">Edit</button>
+                        </form>
+                        <form action="{% url 'rpiapp:delete_season' season.league.id season.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
+                        {% else %}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p> No seasons in database... </p>
+        {% endif %}
+    </section>
+    <section>
+        <h2><u>Teams</u>:</h2>
+        {% if league_teams %}
+            <ul>
+                {% for team in league_teams %}
+                    <li><a href="{% url 'rpiapp:team_details' team.league.id team.id %}" > {{team.name}}</a>
+                        {% if user == league.created_by or user.is_superuser %}
+                        <form action="{% url 'rpiapp:edit_team' league.id team.id %}">
+                            {% csrf_token %}
+                            <button type="submit">Edit</button>
+                        </form>
+                        <form action="{% url 'rpiapp:delete_team' team.league.id team.id %}" method="post">
+                            {% csrf_token %}
+                                <button type="submit">Delete</button>
+                        </form>
+                        {% else %}
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p> No teams in league... </p>
+        {% endif %}
+    </section>
 </body>
 {% endblock %}
 </html>

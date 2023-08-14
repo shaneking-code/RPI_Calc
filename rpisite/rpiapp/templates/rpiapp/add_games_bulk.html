@@ -1,0 +1,25 @@
+{% extends 'rpiapp/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+{% block content %}
+<body>
+    <section>
+        <h2>Bulk add games: </h2>
+        <form action="{% url 'rpiapp:bulk_game_upload' season.league.id season.id %}" enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            <input type="file" name="games_csv" accept=".csv" required>
+            <button type="submit">Upload</button>
+        </form>
+        <br>
+    </section>
+    <section>
+        <a href="{% url 'rpiapp:season_details' season.league.id season.id %}">Back to season</a>
+    </section>
+</body>
+{% endblock %}
+</html>

@@ -12,14 +12,14 @@
     <form action="{% url 'rpiapp:league_search' %}" method="post">
         {% csrf_token %}
         <input type="search" placeholder="League name" name="search_term">
-        <input type="submit" value="Search for League">
+        <button type="submit">Search for League</button>
     </form>
     {% if user.is_authenticated %}
     <h2> Add League: </h2>
     <form method="post">
         {% csrf_token %}
         {{ add_league_form.as_p }}
-        <input type="submit" value="Submit">
+        <button type="submit">Add League</button>
     </form>
     {% endif %}
     <h1> Leagues </h1>

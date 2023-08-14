@@ -3,11 +3,12 @@
     --main-light-gray: #746C70;
     --main-tan: #E2DED0;
     --main-blue-gray: #647C90;
+    --link-blue: #0000EE;
+    --link-purple: #551A8B;
 }
 
 * {
-    font-family:'Courier New', Courier, monospace;
-
+    font-family: 'Courier New', Courier, monospace;
 }
 html {
     margin: 0;
@@ -15,27 +16,41 @@ html {
 }
 body {
     background-color: var(--main-tan);
+    color: var(--main-dark-grey);
     margin: 0;
 }
-h1,h2,h3 {
-    color: var(--main-dark-grey);
-}
 header {
-
     background-color: var(--main-dark-grey);
     display: flex;
+    justify-content: space-evenly;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    font-size: 24px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
 
 }
+div.messages {
+    margin-top: 50px;
+}
+header a {
+    color: var(--main-tan);
+}
+header a:hover {
+    color: var(--main-blue-gray)
+}
+div.messages {
+    text-align: center;
+}
 p.success {
-    color: greenyellow;
+    color: green;
 }
 p.error {
     color: red;
-    text-decoration: underline;
 }
 footer {
     background-color: var(--main-dark-grey);
     color: var(--main-tan);
+    width: 100%;
     padding-bottom: 1.5%;
     padding-top: 1.5%;
     text-align: center;

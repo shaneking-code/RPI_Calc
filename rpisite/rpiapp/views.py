@@ -12,6 +12,9 @@ from django.views.generic import ListView
 from .models import League, Team, Season, Game
 from .utils import calc_rpi
 from .forms import *
+import csv
+import json
+import datetime
 
 # VIEWS
 ##################### ACCOUNT VIEWS #####################
@@ -212,6 +215,7 @@ def league_details(request, league_id):
             add_season_form = AddSeasonForm(request.POST)
             if add_season_form.is_valid():
                 if Season.objects.filter(league=league, year=add_season_form.cleaned_data['year']).exists():
+                    print("YAYAYAYAYAYAYAYAYA")
                     messages.error(request, "Season with this year in this league exists already")
                     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
                 season = add_season_form.save()
@@ -383,13 +387,11 @@ def season_details(request, league_id, season_id):
         add_game_form = AddGameForm(request.POST, season=season)
         if add_game_form.is_valid():
             game = add_game_form.save(commit=False)
-            print(game)
             game.created_by = request.user
             game.league = league
             game.season = season
             game.save()
-            messages.success(request, f"Game: {game}")
-            messages.success(request, "Game created successfully")
+            messages.success(request, f"Game: '{game}' created successfully")
             return HttpResponseRedirect(reverse("rpiapp:season_details", kwargs={"league_id" : league_id,
                                                                                  "season_id" : season_id}))
     else:
@@ -452,37 +454,7 @@ def game_details(request, league_id, season_id, game_id):
     }
 
     return render(request, "rpiapp/game_details.html", context)
-
-# Add a game
-@login_required
-def add_game(request, league_id, season_id):
-    
-    league = get_object_or_404(League, id=league_id)
-    if request.method == 'POST':
-        if request.user == league.created_by:
-            date = request.POST.get('date')
-            winner = get_object_or_404(Team, name=request.POST.get('winner'), league=league)
-            loser = get_object_or_404(Team, name=request.POST.get('loser'), league=league)
-            home_team = get_object_or_404(Team, name=request.POST.get('home_team'), league=league)
-            away_team = get_object_or_404(Team, name=request.POST.get('away_team'), league=league)
-            season = get_object_or_404(Season, id=season_id)
-            
-            game = Game(created_by=request.user,
-                        date=date,
-                        winner=winner,
-                        loser=loser,
-                        home_team=home_team,
-                        away_team=away_team,
-                        season=season,
-                        league=league)
-            game.save()
-
-            messages.success(request, f"Game between {game.home_team} and {game.away_team} on {game.date} created successfully")
-        else:
-            messages.error(request, "You cannot add this game as you do not own the league")
-
-    return HttpResponseRedirect(reverse('rpiapp:season_details', kwargs={"season_id" : season_id,
-                                                                             "league_id" : league_id}))
+                                                                         
 @login_required
 def edit_game(request, league_id, season_id, game_id):
     game_instance = get_object_or_404(Game, id=game_id)
@@ -516,3 +488,54 @@ def delete_game(request, league_id, season_id, game_id):
             messages.error(request, "You cannot delete this game as you do not own it")
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+# BULK GAME UPLOAD VIEW #
+@login_required
+def bulk_game_upload(request, league_id, season_id):
+
+    season = get_object_or_404(Season, id=season_id)
+    league = season.league
+
+    if request.method == 'POST':
+        games_csv = request.FILES.get('games_csv')
+        decoded_games_csv = games_csv.read().decode('utf-8').splitlines()
+        games_csv_reader = csv.reader(decoded_games_csv, delimiter=",")
+        next(games_csv_reader)
+        for row in games_csv_reader:
+            date = datetime.datetime.strptime(row[0], '%m/%d/%Y').date()
+            if date.year != season.year:
+                messages.error(request, f"Contains game outside of year {season.year}")
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            home_team, ht_created = Team.objects.get_or_create(name=row[3], league=league)
+            away_team, at_created = Team.objects.get_or_create(name=row[4], league=league)
+            winner, w_created = Team.objects.get_or_create(name=row[1], league=league)
+            loser, l_created = Team.objects.get_or_create(name=row[2], league=league)
+            created_by = request.user
+            game = Game.objects.create(
+                created_by = created_by,
+                date = date,
+                home_team = home_team,
+                away_team=away_team,
+                winner=winner,
+                loser=loser,
+                season=season,
+                league=league
+            )
+            game.save()
+            if w_created:
+                messages.success(request, f"Team '{winner}' created")
+            if l_created:
+                messages.success(request, f"Team '{loser}' created")
+            if ht_created:
+                messages.success(request, f"Team '{home_team}' created")
+            if at_created:
+                messages.success(request, f"Team '{away_team}' created")
+
+        messages.success(request, "Games imported successfully")
+        return HttpResponseRedirect(reverse('rpiapp:season_details', kwargs={"league_id":league.id,
+                                                                             "season_id":season.id}))
+    
+    context = {
+        "season" : season
+    }
+    return render(request, "rpiapp/add_games_bulk.html", context)
