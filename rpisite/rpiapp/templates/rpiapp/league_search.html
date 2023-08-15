@@ -13,7 +13,11 @@
         {% if search_results %}
         <ul>
             {% for league in search_results %}
-                <li><a href="{% url 'rpiapp:league_details' league.id %}"> {{league.name}} </a></li>
+                {% if league.created_by.is_superuser %}
+                    <li><a href="{% url 'rpiapp:league_details' league.id %}"> {{league.name}} </a></li>
+                {% else %}
+                    <li><a href="{% url 'rpiapp:league_details' league.id %}"> {{league.name}} (created by: {{league.created_by}})</a></li>
+                {% endif %}
             {% endfor %}
         </ul>
         {% else %}
