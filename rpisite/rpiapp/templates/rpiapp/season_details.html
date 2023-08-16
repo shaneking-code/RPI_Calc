@@ -12,6 +12,12 @@
         <h1><a href="{% url 'rpiapp:league_details' season.league.id %}" > {{season.league}}'s</a> {{season.name}} Season </h1>
 
         {% if user == season.league.created_by or user.is_superuser %}
+        <form style="display:inline;" action="{% url 'rpiapp:edit_season' season.league.id season.id %}">
+            {% csrf_token %}
+            <button type="submit">Edit</button>
+        </form>
+        <br>
+        <br>
         <form method="post">
             {% csrf_token %}
             <table>{{ add_game_form.as_table }}</table>

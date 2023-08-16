@@ -10,6 +10,12 @@
 <body>
     <section>
         <h1> Game Details </h1>
+        {% if user == game.created_by %}
+        <form style="display:inline;" action="{% url 'rpiapp:edit_game' game.league.id game.season.id game.id%}">
+            {% csrf_token %}
+            <button type="submit">Edit</button>
+        </form>
+        {% endif %}
         <p><a href="{% url 'rpiapp:season_details' game.league.id game.season.id %}" > Game Season: {{game.season}}</a></p>
         <p><a href="{% url 'rpiapp:league_details' game.league.id %}" > Game League: {{game.league}}</a></p>
         <p>Game Date: {{game.date}}</p>

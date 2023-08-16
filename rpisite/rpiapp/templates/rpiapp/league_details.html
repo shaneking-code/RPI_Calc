@@ -10,25 +10,19 @@
 <body>
     <section>
         <h1> {{league}} </h1>
+        {% if user == league.created_by %}
+        <form style="display:inline;" action="{% url 'rpiapp:edit_league' league.id %}">
+            {% csrf_token %}
+            <button type="submit">Edit</button>
+        </form>
+        {% endif %}
     </section>
     <section>
-        <h3> Team Search: </h3>
+        <h2> Team Search: </h2>
         <form action="{% url 'rpiapp:team_search' league.id %}" method="post">
             {% csrf_token %}
             <input type="search" placeholder="Team name" name="search_term">
             <button type="submit">Search for team</button>
-        </form>
-
-        {% if user == league.created_by or user.superuser %}
-        <h3> Add Season: </h3>
-        <form method="post">
-            {% csrf_token %}
-            <span style="display:inline;">
-                <table>
-                    {{add_season_form.as_table}}
-                </table>
-                <button type="submit" name="add_season">Add Season</button>
-            </span>
         </form>
         <h2> Add Team: </h2>
         <form method="post">
@@ -38,6 +32,18 @@
                 <button type="submit" name="add_team">Add Team</button>
             </span>
         </form>
+        {% if user == league.created_by or user.superuser %}
+        <h2> Add Season: </h2>
+        <form method="post">
+            {% csrf_token %}
+            <span style="display:inline;">
+                <table>
+                    {{add_season_form.as_table}}
+                </table>
+                <button type="submit" name="add_season">Add Season</button>
+            </span>
+        </form>
+
 
         {% else %}
         {% endif %}
