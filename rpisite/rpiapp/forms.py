@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from datetime import date
+from datetime import datetime
 from .models import League, Team, Season, Game
 
 class RegisterForm(UserCreationForm):
@@ -31,8 +31,10 @@ class AddSeasonForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         super(AddSeasonForm, self).__init__(*args, **kwargs)
-        self.fields['start_date'] = forms.DateField(widget=forms.widgets.SelectDateWidget())
-        self.fields['end_date'] = forms.DateField(widget=forms.widgets.SelectDateWidget())
+        self.fields['start_date'] = forms.DateField(initial=datetime.now(),
+                                                    widget=forms.widgets.SelectDateWidget(years=range(datetime.now().year - 50, datetime.now().year + 6)))
+        self.fields['end_date'] = forms.DateField(initial=datetime.now(),
+                                                  widget=forms.widgets.SelectDateWidget(years=range(datetime.now().year - 50, datetime.now().year + 6)))
 
 class AddGameForm(forms.ModelForm):
 

@@ -35,6 +35,9 @@ div.messages {
 header a {
     color: var(--main-tan);
 }
+header span {
+    color: var(--main-tan)
+}
 header a:hover {
     color: var(--main-blue-gray)
 }

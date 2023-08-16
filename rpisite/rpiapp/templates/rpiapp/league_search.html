@@ -16,13 +16,16 @@
                 {% if league.created_by.is_superuser %}
                     <li><a href="{% url 'rpiapp:league_details' league.id %}"> {{league.name}} </a></li>
                 {% else %}
-                    <li><a href="{% url 'rpiapp:league_details' league.id %}"> {{league.name}} (created by: {{league.created_by}})</a></li>
+                    <li><a href="{% url 'rpiapp:league_details' league.id %}"> {{league.name}}</a> (created by: <a href="{% url 'rpiapp:user_profile' league.created_by.id %}">{{league.created_by.username}}</a>)</li>
                 {% endif %}
             {% endfor %}
         </ul>
         {% else %}
         <p> No leagues with name containing: "{{search_term}}" </p>
         {% endif %}
+    </section>
+    <section>
+        <a href="{{referer}}">Back</a>
     </section>
 </body>
 {% endblock %}

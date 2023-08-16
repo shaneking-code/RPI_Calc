@@ -18,39 +18,42 @@ import datetime
 
 # VIEWS
 ##################### ACCOUNT VIEWS #####################
-class user_profile(ListView):
-    model = User
-    context_object_name = "user_created"
-    template_name = "rpiapp/user_profile.html"
+def user_profile(request, user_id):
+    view_user = get_object_or_404(User, id=user_id)
+    leagues = League.objects.filter(created_by=view_user)
+    teams = Team.objects.filter(created_by=view_user)
 
-    def get_context_data(self, **kwargs):
-        context =  super().get_context_data(**kwargs)
-        leagues = League.objects.filter(created_by=self.request.user)
-        teams = Team.objects.filter(created_by=self.request.user)
-        context['leagues'] = leagues
-        context['teams'] = teams
-        return context
+    context = {
+        "view_user" : view_user,
+        "leagues" : leagues,
+        "teams" : teams
+    }
+
+    return render(request, "rpiapp/user_profile.html", context)
 
 @login_required
 def edit_profile(request, user_id):
     user_instance = get_object_or_404(User, id=user_id)
     update_form = EditUserForm(instance=user_instance)
     password_reset_form = PasswordChangeForm(user_instance)
-
-    if request.method == 'POST':
-        if 'update_fields' in request.POST:
-            update_form = EditUserForm(request.POST, instance=user_instance)
-            if update_form.is_valid():
-                update_form.save()
-                messages.success(request, "Profile changed successfully")
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-        if 'password_change' in request.POST:
-            password_reset_form = PasswordChangeForm(user_instance, request.POST)
-            if password_reset_form.is_valid():
-                user = password_reset_form.save()
-                update_session_auth_hash(request, user)
-                messages.success(request, "Password updated successfully")
-                return HttpResponseRedirect(reverse("rpiapp:index"))
+    if request.user == user_instance:
+        if request.method == 'POST':
+            if 'update_fields' in request.POST:
+                update_form = EditUserForm(request.POST, instance=user_instance)
+                if update_form.is_valid():
+                    update_form.save()
+                    messages.success(request, "Profile changed successfully")
+                    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+            if 'password_change' in request.POST:
+                password_reset_form = PasswordChangeForm(user_instance, request.POST)
+                if password_reset_form.is_valid():
+                    user = password_reset_form.save()
+                    update_session_auth_hash(request, user)
+                    messages.success(request, "Password updated successfully")
+                    return HttpResponseRedirect(reverse("rpiapp:index"))
+    else:
+        messages.error(request,"You cannot edit this profile")
+        return HttpResponseRedirect(reverse('rpiapp:user_profile', args=[user_instance.id]))
 
     context = {
         "update_form" : update_form,
@@ -142,15 +145,29 @@ def index(request):
 
 ##################### SEARCH FUNCTIONS #####################
 #Search for a league
-def league_search(request):
+def user_search(request):
 
     if request.method == 'POST':
-        search_term = request.POST.get('search_term')
-        search_results = League.objects.filter(name__contains=search_term)
+        search_term = request.POST.get('user_search_term')
+        search_results = User.objects.filter(username__contains=search_term)
 
         context = {
             "search_term" : search_term,
             "search_results" : search_results
+        }
+
+        return render(request, "rpiapp/user_search.html", context)
+    
+def league_search(request):
+
+    if request.method == 'POST':
+        search_term = request.POST.get('league_search_term')
+        search_results = League.objects.filter(name__contains=search_term)
+
+        context = {
+            "search_term" : search_term,
+            "search_results" : search_results,
+            "referer" : request.META.get('HTTP_REFERER')
         }
 
         return render(request, "rpiapp/league_search.html", context)
@@ -166,7 +183,8 @@ def team_search(request, league_id):
         context = {
             "search_term" : search_term,
             "search_results" : search_results,
-            "league" : league
+            "league" : league, 
+            "referer" : request.META.get('HTTP_REFERER')
         }
 
         return render(request, "rpiapp/team_search.html", context)
@@ -184,6 +202,7 @@ def game_search(request, league_id, season_id):
         context = {
             "search_date" : search_date,
             "search_results" : search_results,
+            "referer" : request.META.get('HTTP_REFERER')
         }
 
         return render(request, "rpiapp/game_search.html", context)
@@ -253,11 +272,14 @@ def edit_league(request, league_id):
             messages.success(request, "League updated successfully")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
+        if request.user != league_instance.created_by:
+            messages.error(request, "You do not own this league")
+            return HttpResponseRedirect(reverse('rpiapp:league_details', args=[league_instance.id]))
         form = EditLeagueForm(instance=league_instance)
     
     context = {
         "form" : form,
-        "league" : league_instance
+        "league" : league_instance,
     }
 
     return render(request, "rpiapp/edit_league.html", context)
@@ -317,6 +339,10 @@ def edit_team(request, league_id, team_id):
             messages.success(request, "Team updated successfully")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
+        if request.user != team_instance.created_by:
+            messages.error(request, "You do not own this team")
+            return HttpResponseRedirect(reverse('rpiapp:team_details', kwargs={"league_id":team_instance.league.id,
+                                                                               "team_id":team_instance.id}))
         form = EditTeamForm(instance=team_instance)
     
     context = {
@@ -329,7 +355,7 @@ def edit_team(request, league_id, team_id):
 
 # Delete a team
 @login_required
-def delete_team(request,league_id,team_id):
+def delete_team(request, league_id, team_id):
 
     if request.method == 'POST':
         team = get_object_or_404(Team, id=team_id)
@@ -425,6 +451,10 @@ def edit_season(request, league_id, season_id):
             messages.success(request, "Season updated successfully")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
+        if request.user != season_instance.created_by:
+            messages.error(request, "You do not own this season")
+            return HttpResponseRedirect(reverse('rpiapp:season_details', kwargs={'league_id':season_instance.league.id,
+                                                                                 "season_id":season_instance.id}))
         form = EditSeasonForm(instance=season_instance)
     
     context = {
@@ -474,6 +504,11 @@ def edit_game(request, league_id, season_id, game_id):
             messages.success(request, "Game updated successfully")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     else:
+        if request.user != game_instance.created_by:
+            messages.error(request, "You do not own this game")
+            return HttpResponseRedirect(reverse('rpiapp:game_details', kwargs={"league_id":game_instance.league.id,
+                                                                                 "season_id":game_instance.season.id,
+                                                                                 "game_id":game_instance.id}))
         form = EditGameForm(instance=game_instance)
     
     context = {

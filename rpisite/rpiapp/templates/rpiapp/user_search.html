@@ -12,16 +12,13 @@
         <h1> Search results for : "{{search_term}}"</h1>
         {% if search_results %}
         <ul>
-            {% for team in search_results %}
-                <li><a href="{% url 'rpiapp:team_details' team.league.id team.id %}"> {{team.name}} </a></li>
+            {% for search_user in search_results %}
+                <li><a href="{% url 'rpiapp:user_profile' search_user.id %}">{{search_user.username}}</a></li>
             {% endfor %}
         </ul>
         {% else %}
-        <p> No teams in "{{league}}" with name containing: "{{search_term}}"</p>
+        <p> No users with name containing: "{{search_term}}" </p>
         {% endif %}
-    </section>
-    <section>
-        <a href="{{referer}}">Back</a>
     </section>
 </body>
 {% endblock %}

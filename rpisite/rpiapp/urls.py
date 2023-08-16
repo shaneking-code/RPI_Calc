@@ -10,12 +10,14 @@ urlpatterns = [
     path("register/", views.register_user, name="register_user"),
     path("login/", views.login_user, name="login_user"),
     path("logout/", views.logout_user, name="logout_user"),
-    path("userprofile/<int:user_id>/", login_required(user_profile.as_view()), name="user_profile"),
-    path("userprofile/<int:user_id>/edit/", views.edit_profile, name="edit_profile"),
+    path("users/<int:user_id>/", views.user_profile, name="user_profile"),
+    path("users/<int:user_id>/edit/", views.edit_profile, name="edit_profile"),
+
     # Index URL
     path("", views.index, name="index"),
 
     # Search URLs
+    path("users/search/", views.user_search, name="user_search"),
     path("leagues/search/", views.league_search, name="league_search"),
     path("leagues/<int:league_id>/teams/search/", views.team_search, name="team_search"),
     path("leagues/<int:league_id>/seasons/<int:season_id>/games/search/", views.game_search, name="game_search"),
@@ -33,10 +35,10 @@ urlpatterns = [
     path("leagues/<int:league_id>/seasons/<int:season_id>/games/<int:game_id>/edit/", views.edit_game, name="edit_game"),
 
     # Delete URLs
-    path("leagues/<int:league_id>/deleteleague/", views.delete_league, name="delete_league"),
-    path("leagues/<int:league_id>/teams/<int:team_id>/deleteteam/", views.delete_team, name="delete_team"),
-    path("leagues/<int:league_id>/seasons/<int:season_id>/deleteseason/", views.delete_season, name="delete_season"),
-    path("leagues/<int:league_id>/seasons/<int:season_id>/games/<int:game_id>/deletegame/", views.delete_game, name="delete_game"),
+    path("leagues/<int:league_id>/delete/", views.delete_league, name="delete_league"),
+    path("leagues/<int:league_id>/teams/<int:team_id>/delete/", views.delete_team, name="delete_team"),
+    path("leagues/<int:league_id>/seasons/<int:season_id>/delete/", views.delete_season, name="delete_season"),
+    path("leagues/<int:league_id>/seasons/<int:season_id>/games/<int:game_id>/delete/", views.delete_game, name="delete_game"),
 
     # Add Games through File
     path("leagues/<int:league_id>/seasons/<int:season_id>/addgames/", views.bulk_game_upload, name="bulk_game_upload")
