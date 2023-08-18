@@ -41,10 +41,10 @@ class AddGameForm(forms.ModelForm):
     def __init__(self, *args, season, **kwargs):
         super(AddGameForm, self).__init__(*args, **kwargs)
         self.fields['date'].widget = forms.SelectDateWidget(years=range(season.start_date.year, season.end_date.year+1))
-        self.fields['winner'].queryset = Team.objects.filter(league=season.league)
-        self.fields['loser'].queryset = Team.objects.filter(league=season.league)
-        self.fields['home_team'].queryset = Team.objects.filter(league=season.league)
-        self.fields['away_team'].queryset = Team.objects.filter(league=season.league)
+        self.fields['winner'].queryset = Team.objects.filter(league=season.league).order_by("name")
+        self.fields['loser'].queryset = Team.objects.filter(league=season.league).order_by("name")
+        self.fields['home_team'].queryset = Team.objects.filter(league=season.league).order_by("name")
+        self.fields['away_team'].queryset = Team.objects.filter(league=season.league).order_by("name")
 
     class Meta:
         model = Game

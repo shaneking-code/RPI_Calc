@@ -9,11 +9,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.views.generic import ListView
-from .models import League, Team, Season, Game
-from .utils import calc_rpi
+from .models import League, Team, Season, Game, RPI
+from .utils.bulk_rpi import bulk_create_games
 from .forms import *
 import csv
-import json
 import datetime
 
 # VIEWS
@@ -246,13 +245,14 @@ def league_details(request, league_id):
             add_season_form = AddSeasonForm(request.POST)
             if add_season_form.is_valid():
                 if Season.objects.filter(league=league, name=add_season_form.cleaned_data['name']).exists():
-                    print("YAYAYAYAYAYAYAYAYA")
                     messages.error(request, "Season with this name in this league exists already")
                     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
                 season = add_season_form.save()
                 season.league = league
                 season.created_by = request.user
                 season.save()
+                for team in league_teams:
+                    RPI.objects.create(team=team,season=season,rpi=-1)
                 messages.success(request, f"Season {season} created successfully")
         
     else:
@@ -404,19 +404,10 @@ def season_details(request, league_id, season_id):
         else:
             season_games_by_date[game.date].append(game)
 
-
-    season_games_obj = []
-    # Populate season_games_obj
-    for game in season_games:
-        season_games_obj.append({
-            "Winner" : game.winner.name,
-            "Loser" : game.loser.name,
-            "Location" : game.home_team.name
-        })
-    
     rpis = []
     for team in set(season_teams):
-        rpis.append(format(calc_rpi(team.name,season_games_obj), '.3f'))
+        rpi = RPI.objects.get(team=team, season=season)
+        rpis.append(format(rpi.rpi, '.3f'))
     
     rpis_by_team = list(zip(rpis,season_teams))
     rpis_by_team = reversed(sorted(rpis_by_team, key=lambda x: x[0]))
@@ -432,7 +423,9 @@ def season_details(request, league_id, season_id):
             game.created_by = request.user
             game.league = league
             game.season = season
+            game.bulk_processing = False
             game.save()
+            
             messages.success(request, f"Game: '{game}' created successfully")
             return HttpResponseRedirect(reverse("rpiapp:season_details", kwargs={"league_id" : league_id,
                                                                                  "season_id" : season_id}))
@@ -556,6 +549,7 @@ def bulk_game_upload(request, league_id, season_id):
         decoded_games_csv = games_csv.read().decode('utf-8').splitlines()
         games_csv_reader = csv.reader(decoded_games_csv, delimiter=",")
         next(games_csv_reader)
+        games = []
         for row in games_csv_reader:
             date = datetime.datetime.strptime(row[0], '%m/%d/%Y').date()
             if date < season.start_date or date > season.end_date:
@@ -566,7 +560,7 @@ def bulk_game_upload(request, league_id, season_id):
             winner, w_created = Team.objects.get_or_create(name=row[1], league=league, created_by=request.user)
             loser, l_created = Team.objects.get_or_create(name=row[2], league=league, created_by=request.user)
             created_by = request.user
-            game = Game.objects.create(
+            game = Game(
                 created_by = created_by,
                 date = date,
                 home_team = home_team,
@@ -574,9 +568,10 @@ def bulk_game_upload(request, league_id, season_id):
                 winner=winner,
                 loser=loser,
                 season=season,
-                league=league
+                league=league,
+                bulk_processing=True
             )
-            game.save()
+            games.append(game)
             if w_created:
                 messages.success(request, f"Team '{winner}' created")
             if l_created:
@@ -585,7 +580,7 @@ def bulk_game_upload(request, league_id, season_id):
                 messages.success(request, f"Team '{home_team}' created")
             if at_created:
                 messages.success(request, f"Team '{away_team}' created")
-
+        bulk_create_games(season, games, True)
         messages.success(request, "Games imported successfully")
         return HttpResponseRedirect(reverse('rpiapp:season_details', kwargs={"league_id":league.id,
                                                                              "season_id":season.id}))
