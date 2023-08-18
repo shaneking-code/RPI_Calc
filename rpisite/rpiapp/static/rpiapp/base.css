@@ -45,10 +45,10 @@ div.messages {
     text-align: center;
 }
 p.success {
-    color: green;
+    color: #69B668;
 }
 p.error {
-    color: red;
+    color: #FF4B48;
 }
 footer {
     background-color: var(--main-dark-grey);

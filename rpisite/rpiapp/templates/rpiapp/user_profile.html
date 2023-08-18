@@ -10,12 +10,16 @@
 <body>
     <section>
         {% if view_user.is_superuser %}
-        <h1 style="text-align: center; color: green;"> **Admin** </h1>
+        <h1 style="color: #58B457;"> **Admin** </h1>
+        {% endif %}
+        {% if not view_user.is_active %}
+        <h1 style="color:red;">**User is inactive**</h1>
         {% endif %}
         <h2>Username:</h2><p> {{view_user.username}}</p>
         <h2>Email: </h2><p>{{view_user.email}}</p>
         {% if user == view_user %}
             <h2><a href="{% url 'rpiapp:edit_profile' user.id %}">Edit Profile</a></h2>
+            <h2><a style="color: #FF4B48;" href="{% url 'rpiapp:delete_profile' user.id %}">Delete Profile</a></h2>
         {% endif %}
     </section>
     <section>

@@ -62,6 +62,18 @@ def edit_profile(request, user_id):
     }
     return render(request, "registration/edit_profile.html", context)
 
+@login_required
+def delete_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.user == user:
+        user.is_active = False
+        user.save()
+        messages.success(request, "Account deleted successfully")
+        return HttpResponseRedirect(reverse('rpiapp:index'))
+    
+    messages.error(request, "You cannot delete this account")
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
 def register_user(request):
 
     if request.method == 'POST':

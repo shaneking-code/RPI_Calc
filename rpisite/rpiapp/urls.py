@@ -12,6 +12,7 @@ urlpatterns = [
     path("logout/", views.logout_user, name="logout_user"),
     path("users/<int:user_id>/", views.user_profile, name="user_profile"),
     path("users/<int:user_id>/edit/", views.edit_profile, name="edit_profile"),
+    path("users/<int:user_id>/delete", views.delete_profile, name="delete_profile"),
 
     # Index URL
     path("", views.index, name="index"),
