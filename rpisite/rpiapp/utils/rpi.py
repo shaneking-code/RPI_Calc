@@ -1,3 +1,19 @@
+def get_season_params(games):
+    season_teams = set()
+    season_games_obj = []
+    for game in games:
+        if game.winner not in season_teams:
+            season_teams.add(game.winner)
+        if game.loser not in season_teams:
+            season_teams.add(game.loser)
+
+        season_games_obj.append({
+            "Winner" : game.winner.name,
+            "Loser" : game.loser.name,
+            "Location" : game.home_team.name
+        })
+    
+    return season_teams, season_games_obj
 
 # Calculate RPI of "team"
 def calc_rpi(team,

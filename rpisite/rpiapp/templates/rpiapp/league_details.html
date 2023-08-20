@@ -53,7 +53,7 @@
         {% if league_seasons %}
             <ul>
                 {% for season in league_seasons %}
-                    <li><a href="{% url 'rpiapp:season_details' season.league.id season.id %}" > {{season.name}} Season</a><p style="display:inline;"> ({{season.start_date}} - {{season.end_date}}) </p>
+                    <li>
                         {% if user == league.created_by or user.is_superuser %}
                         <form action="{% url 'rpiapp:edit_season' league.id season.id %}">
                             {% csrf_token %}
@@ -65,6 +65,7 @@
                         </form>
                         {% else %}
                         {% endif %}
+                        <a href="{% url 'rpiapp:season_details' season.league.id season.id %}" > {{season.name}} Season</a><p style="display:inline;"> ({{season.start_date}} - {{season.end_date}}) </p>
                     </li>
                 {% endfor %}
             </ul>
@@ -77,7 +78,7 @@
         {% if league_teams %}
             <ul>
                 {% for team in league_teams %}
-                    <li><a href="{% url 'rpiapp:team_details' team.league.id team.id %}" > {{team.name}}</a>
+                    <li>
                         {% if user == league.created_by or user.is_superuser %}
                         <form action="{% url 'rpiapp:edit_team' league.id team.id %}">
                             {% csrf_token %}
@@ -89,6 +90,7 @@
                         </form>
                         {% else %}
                         {% endif %}
+                        <a href="{% url 'rpiapp:team_details' team.league.id team.id %}" > {{team.name}}</a>
                     </li>
                 {% endfor %}
             </ul>

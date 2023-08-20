@@ -15,11 +15,13 @@ class EditUserForm(forms.ModelForm):
         fields = ('username','email')
 
 class AddLeagueForm(forms.ModelForm):
+    name = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder':'Your League'}))
     class Meta:
         model = League
         fields = ['name',]
 
 class AddTeamForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={'placeholder' : 'Your Team'}))
     class Meta:
         model = Team
         fields = ['name',]
@@ -35,7 +37,7 @@ class AddSeasonForm(forms.ModelForm):
                                                     widget=forms.widgets.SelectDateWidget(years=range(datetime.now().year - 50, datetime.now().year + 6)))
         self.fields['end_date'] = forms.DateField(initial=datetime.now(),
                                                   widget=forms.widgets.SelectDateWidget(years=range(datetime.now().year - 50, datetime.now().year + 6)))
-
+        self.fields['name'] = forms.CharField(widget=forms.TextInput(attrs={'placeholder':f'{datetime.now().year} - {datetime.now().year+1}'}))
 class AddGameForm(forms.ModelForm):
 
     def __init__(self, *args, season, **kwargs):
@@ -75,10 +77,10 @@ class EditGameForm(forms.ModelForm):
         instance = kwargs['instance']
         super(EditGameForm, self).__init__(*args, **kwargs)
         self.fields['date'] = forms.DateField(widget=forms.widgets.SelectDateWidget(years=range(instance.season.start_date.year, instance.season.end_date.year+1)))
-        self.fields['winner'].queryset = instance.season.league.teams.all()
-        self.fields['loser'].queryset = instance.season.league.teams.all()
-        self.fields['home_team'].queryset = instance.season.league.teams.all()
-        self.fields['away_team'].queryset = instance.season.league.teams.all()
+        self.fields['winner'].queryset = instance.season.league.teams.all().order_by("name")
+        self.fields['loser'].queryset = instance.season.league.teams.all().order_by("name")
+        self.fields['home_team'].queryset = instance.season.league.teams.all().order_by("name")
+        self.fields['away_team'].queryset = instance.season.league.teams.all().order_by("name")
 
 
 

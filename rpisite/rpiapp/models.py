@@ -64,7 +64,7 @@ class RPI(models.Model):
 
 @receiver([post_save,post_delete], sender=Game)
 def recalculate_rpis(sender, instance, **kwargs):
-    if not instance.bulk_processing:
+    if not instance.bulk_processing and instance.season:
         season_games = instance.season.season_games.all()
         season_games_obj = []
         season_teams = set()

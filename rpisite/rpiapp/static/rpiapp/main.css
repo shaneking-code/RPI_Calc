@@ -50,15 +50,18 @@ li {
 
 a {
     color: #647C90;
+    display: inline-block;
 }
 a:hover {
     color: #4E4F50;
 }
 form {
-    display: inline;
+    display: inline-block;
     margin-right: 10px;
 }
-
+form label {
+    color: var(--main-light-gray);
+}
 input[type="search"],
 input[type="text"],
 input[type="number"],

@@ -11,6 +11,7 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.views.generic import ListView
 from .models import League, Team, Season, Game, RPI
 from .utils.bulk_rpi import bulk_create_games
+from .utils.rpi import get_season_params
 from .forms import *
 import csv
 import datetime
@@ -323,7 +324,8 @@ def team_details(request, league_id, team_id):
         if game.season not in team_games_by_season:
             team_games_by_season[game.season] = {"games":[],
                                                  "wins":0,
-                                                 "losses":0}
+                                                 "losses":0,
+                                                 "rpi":format(get_object_or_404(RPI, team=team, season=game.season).rpi, '.3f')}
         team_games_by_season[game.season]['games'].append(game)
         if game.winner == team:
             team_games_by_season[game.season]['wins'] += 1
@@ -388,13 +390,7 @@ def season_details(request, league_id, season_id):
     season_games = season.season_games.all().order_by("-date")
     league_teams = league.teams.all()
 
-    season_teams = set()
-    # Populate season_teams
-    for game in season_games:
-        if game.winner.name not in season_teams:
-            season_teams.add(game.winner)
-        if game.loser.name not in season_teams:
-            season_teams.add(game.loser)
+    season_teams, _ = get_season_params(season_games)
 
     season_games_by_date = {}
     # Populate season_games_by_date
@@ -496,7 +492,10 @@ def game_details(request, league_id, season_id, game_id):
                                                                          
 @login_required
 def edit_game(request, league_id, season_id, game_id):
+
     game_instance = get_object_or_404(Game, id=game_id)
+    game_instance.bulk_processing = False
+    game_instance.save()
 
     if request.method == 'POST' and (game_instance.created_by == request.user or request.user.is_superuser):
         form = EditGameForm(request.POST, instance=game_instance)

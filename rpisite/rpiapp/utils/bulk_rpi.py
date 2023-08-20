@@ -1,21 +1,9 @@
 from django.apps import apps
-from .rpi import calc_rpi
+from .rpi import calc_rpi, get_season_params
 
 def bulk_recalculate_rpis(season,games):
     RPI = apps.get_model('rpiapp', 'RPI')
-    season_games_obj = []
-    season_teams = set()
-    for game in games:
-        if game.winner not in season_teams:
-            season_teams.add(game.winner)
-        if game.loser not in season_teams:
-            season_teams.add(game.loser)
-
-        season_games_obj.append({
-            "Winner" : game.winner.name,
-            "Loser" : game.loser.name,
-            "Location" : game.home_team.name
-        })
+    season_teams, season_games_obj = get_season_params(games)
 
     for team in season_teams:
         team_rpi, created = RPI.objects.get_or_create(team=team,season=season,rpi=-1)

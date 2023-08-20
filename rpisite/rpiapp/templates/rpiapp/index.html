@@ -25,7 +25,7 @@
         <h2> Add League: </h2>
         <form method="post">
             {% csrf_token %}
-            {{ add_league_form.as_p }}
+            {{ add_league_form.name }}
             <button type="submit">Add League</button>
         </form>
         {% endif %}
@@ -35,25 +35,35 @@
         <h2> Professional: </h2>
         <ul>
             {% for league in major_leagues_objs %}
-            <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a></li>
+            <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a>
             {% if user == league.created_by or user.is_superuser %}
-            <form action="{% url 'rpiapp:delete_league' league.id %}" method="post">
+            <form action="{% url 'rpiapp:edit_league' league.id %}">
+                {% csrf_token %}
+                <button type="submit">Edit</button>
+            </form>
+            <form style='display:inline;' action="{% url 'rpiapp:delete_league' league.id %}" method="post">
                 {% csrf_token %}
                 <button type="submit">Delete</button>
             </form>
             {% endif %}
+            </li>
             {% endfor %}
         </ul>
         <h2> Collegiate: </h2>
         <ul>
             {% for league in ncaa_leagues_objs %}
-            <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a></li>
+            <li><a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a>
             {% if user == league.created_by or user.is_superuser %}
-            <form action="{% url 'rpiapp:delete_league' league.id %}" method="post">
+            <form action="{% url 'rpiapp:edit_league' league.id %}">
+                {% csrf_token %}
+                <button type="submit">Edit</button>
+            </form>
+            <form style='display:inline;' action="{% url 'rpiapp:delete_league' league.id %}" method="post">
                 {% csrf_token %}
                 <button type="submit">Delete</button>
             </form>
             {% endif %}
+            </li>
             {% endfor %}      
         </ul>
     </section>
