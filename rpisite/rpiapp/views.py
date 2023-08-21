@@ -71,7 +71,9 @@ def delete_profile(request, user_id):
         messages.success(request, "Account deleted successfully")
         return HttpResponseRedirect(reverse('rpiapp:index'))
     
-    messages.error(request, "You cannot delete this account")
+    else:
+        messages.error(request, "You cannot delete this account")
+
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 def register_user(request):
@@ -107,6 +109,7 @@ def login_user(request):
 
 def logout_user(request):
     logout(request)
+
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 ##################### HOME PAGE VIEW #####################
@@ -165,7 +168,8 @@ def user_search(request):
 
         context = {
             "search_term" : search_term,
-            "search_results" : search_results
+            "search_results" : search_results,
+            "referer" : request.META.get('HTTP_REFERER')
         }
 
         return render(request, "rpiapp/user_search.html", context)
@@ -528,6 +532,8 @@ def delete_game(request, league_id, season_id, game_id):
 
     if request.method == 'POST':
         game = get_object_or_404(Game, id=game_id)
+        game.bulk_processing = False
+        game.save()
         if request.user == game.created_by or request.user.is_superuser:
             game.delete()
             messages.success(request, f"Game between {game.home_team} and {game.away_team} on {game.date} deleted successfully")
