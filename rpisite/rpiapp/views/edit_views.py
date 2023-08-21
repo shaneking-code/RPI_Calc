@@ -30,7 +30,7 @@ def edit_league(request, league_id):
         "league" : league_instance,
     }
 
-    return render(request, "rpiapp/edit_league.html", context)
+    return render(request, "rpiapp/edit_templates/edit_league.html", context)
 
 @login_required
 def edit_team(request, league_id, team_id):
@@ -57,7 +57,7 @@ def edit_team(request, league_id, team_id):
         "team" : team_instance
     }
 
-    return render(request, "rpiapp/edit_team.html", context)
+    return render(request, "rpiapp/edit_templates/edit_team.html", context)
 
 @login_required
 def edit_season(request, league_id, season_id):
@@ -84,7 +84,7 @@ def edit_season(request, league_id, season_id):
         "season" : season_instance
     }
 
-    return render(request, "rpiapp/edit_season.html", context)
+    return render(request, "rpiapp/edit_templates/edit_season.html", context)
 
 @login_required
 def edit_game(request, league_id, season_id, game_id):
@@ -116,4 +116,4 @@ def edit_game(request, league_id, season_id, game_id):
         "game" : game_instance
     }
 
-    return render(request, "rpiapp/edit_game.html", context)
+    return render(request, "rpiapp/edit_templates/edit_game.html", context)

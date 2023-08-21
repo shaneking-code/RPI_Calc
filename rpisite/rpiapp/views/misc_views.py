@@ -58,4 +58,4 @@ def bulk_game_upload(request, league_id, season_id):
     context = {
         "season" : season
     }
-    return render(request, "rpiapp/add_games_bulk.html", context)
+    return render(request, "rpiapp/misc_templates/add_games_bulk.html", context)

@@ -49,7 +49,7 @@ def index(request):
         "add_league_form" : add_league_form
     }
 
-    return render(request, "rpiapp/index.html", context)
+    return render(request, "rpiapp/detail_templates/index.html", context)
 
 def league_details(request, league_id):
 
@@ -97,7 +97,7 @@ def league_details(request, league_id):
         "add_season_form" : add_season_form
     }
 
-    return render(request, "rpiapp/league_details.html", context)
+    return render(request, "rpiapp/detail_templates/league_details.html", context)
 
 def team_details(request, league_id, team_id):
 
@@ -123,7 +123,7 @@ def team_details(request, league_id, team_id):
         "team_games_by_season" : team_games_by_season,
     }
 
-    return render(request, "rpiapp/team_details.html", context)
+    return render(request, "rpiapp/detail_templates/team_details.html", context)
 
 def season_details(request, league_id, season_id):
 
@@ -178,7 +178,7 @@ def season_details(request, league_id, season_id):
         "add_game_form" : add_game_form
     }
 
-    return render(request, "rpiapp/season_details.html", context)
+    return render(request, "rpiapp/detail_templates/season_details.html", context)
 
 def game_details(request, league_id, season_id, game_id):
 
@@ -187,5 +187,5 @@ def game_details(request, league_id, season_id, game_id):
         "game" : game
     }
 
-    return render(request, "rpiapp/game_details.html", context)
+    return render(request, "rpiapp/detail_templates/game_details.html", context)
             

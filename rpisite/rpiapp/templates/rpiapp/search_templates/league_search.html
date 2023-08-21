@@ -9,6 +9,9 @@
 {% block content %}
 <body>
     <section>
+        <a href="{{referer}}">Back</a>
+    </section>
+    <section>
         <h1> Search results for : "{{search_term}}"</h1>
         {% if search_results %}
         <ul>
@@ -23,9 +26,6 @@
         {% else %}
         <p> No leagues with name containing: "{{search_term}}" </p>
         {% endif %}
-    </section>
-    <section>
-        <a href="{{referer}}">Back</a>
     </section>
 </body>
 {% endblock %}

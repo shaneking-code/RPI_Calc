@@ -16,7 +16,7 @@ def user_search(request):
             "referer" : request.META.get('HTTP_REFERER')
         }
 
-        return render(request, "rpiapp/user_search.html", context)
+        return render(request, "rpiapp/search_templates/user_search.html", context)
     
 def league_search(request):
 
@@ -30,7 +30,7 @@ def league_search(request):
             "referer" : request.META.get('HTTP_REFERER')
         }
 
-        return render(request, "rpiapp/league_search.html", context)
+        return render(request, "rpiapp/search_templates/league_search.html", context)
 
 # Search for a team
 def team_search(request, league_id):
@@ -47,7 +47,7 @@ def team_search(request, league_id):
             "referer" : request.META.get('HTTP_REFERER')
         }
 
-        return render(request, "rpiapp/team_search.html", context)
+        return render(request, "rpiapp/search_templates/team_search.html", context)
 
 # Search for a game (by date)
 def game_search(request, league_id, season_id):
@@ -65,4 +65,4 @@ def game_search(request, league_id, season_id):
             "referer" : request.META.get('HTTP_REFERER')
         }
 
-        return render(request, "rpiapp/game_search.html", context)
+        return render(request, "rpiapp/search_templates/game_search.html", context)

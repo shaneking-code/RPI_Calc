@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import bulk_upload_view, delete_views, detail_views, edit_views, search_views, user_views
+from .views import delete_views, detail_views, edit_views, misc_views, search_views, user_views
 
 app_name = "rpiapp"
 urlpatterns = [
@@ -12,15 +12,15 @@ urlpatterns = [
     path("users/<int:user_id>/edit/", user_views.edit_profile, name="edit_profile"),
     path("users/<int:user_id>/delete", user_views.delete_profile, name="delete_profile"),
 
-    # Index URL
-    path("", detail_views.index, name="index"),
-
     # Search URLs
     path("users/search/", search_views.user_search, name="user_search"),
     path("leagues/search/", search_views.league_search, name="league_search"),
     path("leagues/<int:league_id>/teams/search/", search_views.team_search, name="team_search"),
     path("leagues/<int:league_id>/seasons/<int:season_id>/games/search/", search_views.game_search, name="game_search"),
     
+    # Index URL
+    path("", detail_views.index, name="index"),
+
     # Detail URLs
     path("leagues/<int:league_id>/", detail_views.league_details, name="league_details"),
     path("leagues/<int:league_id>/teams/<int:team_id>/", detail_views.team_details, name="team_details"),
@@ -40,5 +40,5 @@ urlpatterns = [
     path("leagues/<int:league_id>/seasons/<int:season_id>/games/<int:game_id>/delete/", delete_views.delete_game, name="delete_game"),
 
     # Add Games through File
-    path("leagues/<int:league_id>/seasons/<int:season_id>/addgames/", bulk_upload_view.bulk_game_upload, name="bulk_game_upload")
+    path("leagues/<int:league_id>/seasons/<int:season_id>/addgames/", misc_views.bulk_game_upload, name="bulk_game_upload")
 ]

@@ -9,19 +9,19 @@
 {% block content %}
 <body>
     <section>
-        <h1> Search results for {{search_date}}</h1>
+        <a href="{{referer}}">Back</a>
+    </section>
+    <section>
+        <h1> Search results for : "{{search_term}}"</h1>
         {% if search_results %}
         <ul>
-            {% for game in search_results %}
-                <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}"> {{game}} </a></li>
+            {% for search_user in search_results %}
+                <li><a href="{% url 'rpiapp:user_profile' search_user.id %}">{{search_user.username}}</a></li>
             {% endfor %}
         </ul>
         {% else %}
-        <p> No games on this date... </p>
+        <p> No users with name containing: "{{search_term}}" </p>
         {% endif %}
-    </section>
-    <section>
-        <a href="{{referer}}">Back</a>
     </section>
 </body>
 {% endblock %}
