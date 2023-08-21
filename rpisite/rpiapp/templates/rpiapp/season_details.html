@@ -23,8 +23,8 @@
             <table>{{ add_game_form.as_table }}</table>
             <br>
             <button type="submit">Add Game</button>
+            <a href="{% url 'rpiapp:bulk_game_upload' season.league.id season.id %}">Or upload games in bulk</a>
         </form>
-        <a href="{% url 'rpiapp:bulk_game_upload' season.league.id season.id %}">Or upload games in bulk</a>
         {% else %}
         {% endif %}
     </section>
