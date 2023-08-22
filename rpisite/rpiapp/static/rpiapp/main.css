@@ -61,6 +61,18 @@ form {
 }
 form label {
     color: var(--main-light-gray);
+    display: inline-block;
+    text-align: right;
+}
+table {
+    margin-bottom: 10px;
+}
+tr {
+    margin-bottom: 5px;
+}
+th {
+    text-align: right;
+    font-weight: lighter;
 }
 input[type="search"],
 input[type="text"],

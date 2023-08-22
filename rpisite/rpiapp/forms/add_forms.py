@@ -3,10 +3,11 @@ from datetime import datetime
 from ..models import League, Team, Season, Game
 
 class AddLeagueForm(forms.ModelForm):
-    name = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder':'Your League'}))
+    name = forms.CharField(label='Name', widget=forms.TextInput(attrs={'placeholder':'Your League'}))
+    sport = forms.CharField(label='Sport', widget=forms.TextInput(attrs={'placeholder':'Baseball'}))
     class Meta:
         model = League
-        fields = ['name',]
+        exclude = ['created_by']
 
 class AddTeamForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'placeholder' : 'Your Team'}))
@@ -17,7 +18,7 @@ class AddTeamForm(forms.ModelForm):
 class AddSeasonForm(forms.ModelForm):
     class Meta:
         model = Season
-        fields = ['start_date','end_date','name']
+        exclude = ['created_by','league']
     
     def __init__(self, *args, **kwargs):
         super(AddSeasonForm, self).__init__(*args, **kwargs)
@@ -26,6 +27,12 @@ class AddSeasonForm(forms.ModelForm):
         self.fields['end_date'] = forms.DateField(initial=datetime.now(),
                                                   widget=forms.widgets.SelectDateWidget(years=range(datetime.now().year - 50, datetime.now().year + 6)))
         self.fields['name'] = forms.CharField(widget=forms.TextInput(attrs={'placeholder':f'{datetime.now().year} - {datetime.now().year+1}'}))
+
+        self.fields['wp_weight'].required = False
+        self.fields['owp_weight'].required = False
+        self.fields['oowp_weight'].required = False
+        self.fields['high_weight'].required = False
+        self.fields['low_weight'].required = False
         
 class AddGameForm(forms.ModelForm):
 

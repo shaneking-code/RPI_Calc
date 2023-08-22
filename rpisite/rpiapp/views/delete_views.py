@@ -48,8 +48,7 @@ def delete_game(request, league_id, season_id, game_id):
 
     if request.method == 'POST':
         game = get_object_or_404(Game, id=game_id)
-        game.bulk_processing = False
-        game.save()
+
         if request.user == game.created_by or request.user.is_superuser:
             game.delete()
             messages.success(request, f"Game between {game.home_team} and {game.away_team} on {game.date} deleted successfully")

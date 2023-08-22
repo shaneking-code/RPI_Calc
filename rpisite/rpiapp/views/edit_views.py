@@ -66,9 +66,6 @@ def edit_season(request, league_id, season_id):
     if request.method == 'POST' and (request.user == season_instance.created_by or request.user.is_superuser):
         form = EditSeasonForm(request.POST, instance=season_instance)
         if form.is_valid():
-            if Season.objects.all().filter(league__id=league_id, name=form.cleaned_data['name']).exists():
-                messages.error(request, "Season in this league with that name exists already")
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
             form.save()
             messages.success(request, "Season updated successfully")
             return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
@@ -90,8 +87,6 @@ def edit_season(request, league_id, season_id):
 def edit_game(request, league_id, season_id, game_id):
 
     game_instance = get_object_or_404(Game, id=game_id)
-    game_instance.bulk_processing = False
-    game_instance.save()
 
     if request.method == 'POST' and (game_instance.created_by == request.user or request.user.is_superuser):
         form = EditGameForm(request.POST, instance=game_instance)

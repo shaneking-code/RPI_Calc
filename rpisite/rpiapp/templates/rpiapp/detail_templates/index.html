@@ -21,11 +21,15 @@
             <input type="search" placeholder="User name" name="user_search_term">
             <button type="submit">Search for User</button>
         </form>
+    </section>
+    <section>
         {% if user.is_authenticated %}
         <h2> Add League: </h2>
         <form method="post">
             {% csrf_token %}
-            {{ add_league_form.name }}
+            <table>
+                {{add_league_form.as_table}}
+            </table>
             <button type="submit">Add League</button>
         </form>
         {% endif %}

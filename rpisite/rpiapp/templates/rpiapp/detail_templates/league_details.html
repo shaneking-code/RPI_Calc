@@ -36,12 +36,10 @@
         <h2> Add Season: </h2>
         <form method="post">
             {% csrf_token %}
-            <span style="display:inline;">
                 <table>
                     {{add_season_form.as_table}}
                 </table>
                 <button type="submit" name="add_season">Add Season</button>
-            </span>
         </form>
 
 

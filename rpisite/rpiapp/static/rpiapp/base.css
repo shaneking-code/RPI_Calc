@@ -50,6 +50,9 @@ p.success {
 p.error {
     color: #FF4B48;
 }
+.errorlist li {
+    color: #FF4B48;
+}
 footer {
     background-color: var(--main-dark-grey);
     color: var(--main-tan);

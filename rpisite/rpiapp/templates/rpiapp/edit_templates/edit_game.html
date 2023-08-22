@@ -9,10 +9,13 @@
 {% block content %}
 <body>
     <section>
-        <h2> Editing Game: {{game}} </h2>
+        <h2> Editing Game:</h2>
+        <p>{{game}}</p>
         <form action="{% url 'rpiapp:edit_game' game.league.id game.season.id game.id %}" method="post">
             {% csrf_token %}
-            {{form.as_p}}
+            <table>
+                {{form.as_table}}
+            </table>
             <input type="submit" value="Submit">
         </form>
     </section>
