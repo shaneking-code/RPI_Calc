@@ -32,27 +32,20 @@
                 <button type="submit" name="add_team">Add Team</button>
             </span>
         </form>
-        {% if user == league.created_by or user.superuser %}
+    </section>
+    {% if user == league.created_by or user.superuser %}
+    <section>
         <h2> Add Season: </h2>
         <form method="post">
             {% csrf_token %}
-                <p>Common sport RPI weights (High, Low):</p>
-                <ul>
-                    <li>Baseball: (1.2, 0.8)</li>
-                    <li>Basketball: (1.3, 0.7)</li>
-                    <li>Football: (1.1, 0.9)</li>
-                    <li>Hockey: (1.1, 0.9)</li>
-                </ul>
                 <table>
                     {{add_season_form.as_table}}
                 </table>
                 <button type="submit" name="add_season">Add Season</button>
         </form>
-
-
-        {% else %}
-        {% endif %}
     </section>
+    {% else %}
+    {% endif %}
     <section>
         <h2><u>Seasons</u>:</h2>
         {% if league_seasons %}
