@@ -9,7 +9,6 @@ class League(models.Model):
 
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="user_leagues", null=True)
     name       = models.CharField(max_length=100, unique=True)
-    sport      = models.CharField(max_length=100, null=True)    
 
     def __str__(self):
         return self.name
@@ -91,7 +90,6 @@ def recalculate_rpis(sender, instance, **kwargs):
                     rpi.rpi = calc_rpi(team.name, 
                                        season_games_obj, 
                                        instance.season.location_matters,
-                                       instance.league.sport, 
                                        instance.season.high_weight,
                                        instance.season.low_weight,
                                        instance.season.wp_weight,
@@ -105,7 +103,6 @@ def recalculate_rpis(sender, instance, **kwargs):
                                              rpi=calc_rpi(team.name,
                                                           season_games_obj,
                                                           instance.season.location_matters,
-                                                          instance.league.sport,
                                                           instance.season.high_weight,
                                                           instance.season.low_weight,
                                                           instance.season.wp_weight,
@@ -126,7 +123,6 @@ def recalculate_rpis_on_season_change(sender, instance, created, **kwargs):
                 rpi.rpi = calc_rpi(team.name, 
                                     season_games_obj, 
                                     instance.location_matters,
-                                    instance.league.sport, 
                                     instance.high_weight,
                                     instance.low_weight,
                                     instance.wp_weight,
@@ -140,7 +136,6 @@ def recalculate_rpis_on_season_change(sender, instance, created, **kwargs):
                                             rpi=calc_rpi(team.name,
                                                         season_games_obj,
                                                         instance.location_matters,
-                                                        instance.league.sport,
                                                         instance.high_weight,
                                                         instance.low_weight,
                                                         instance.wp_weight,

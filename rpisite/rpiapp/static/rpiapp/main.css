@@ -40,7 +40,7 @@ ul {
     padding: 0;
 }
 ul ul {
-    list-style-type:circle;
+    list-style-type: none;
     padding: 5px;
     margin-left: 40px;
 }
@@ -72,7 +72,7 @@ tr {
 }
 th {
     text-align: right;
-    font-weight: lighter;
+    font-weight: normal;
 }
 input[type="search"],
 input[type="text"],
@@ -95,6 +95,17 @@ button[type="submit"] {
 select {
     color: var(--main-dark-grey)
 }
+#deleteprofile {
+    color: #FF4B48;
+}
+#deleteprofile:hover {
+    color: rgb(229, 2, 2);
+}
 button[type="submit"]:hover {
     background-color: #746C70;
+}
+.uprofile-span {
+    display:inline-block;
+    margin-bottom: 5px;
+    margin-top: 5px;
 }

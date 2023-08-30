@@ -27,9 +27,7 @@
         <h2> Add League: </h2>
         <form method="post">
             {% csrf_token %}
-            <table>
-                {{add_league_form.as_table}}
-            </table>
+            {{add_league_form.name}}
             <button type="submit">Add League</button>
         </form>
         {% endif %}

@@ -3,8 +3,8 @@ from datetime import datetime
 from ..models import League, Team, Season, Game
 
 class AddLeagueForm(forms.ModelForm):
-    name = forms.CharField(label='Name', widget=forms.TextInput(attrs={'placeholder':'Your League'}))
-    sport = forms.CharField(label='Sport', widget=forms.TextInput(attrs={'placeholder':'Baseball'}))
+    name = forms.CharField(label='', widget=forms.TextInput(attrs={'placeholder':'Your League'}))
+
     class Meta:
         model = League
         exclude = ['created_by']

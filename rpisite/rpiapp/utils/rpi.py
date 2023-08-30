@@ -19,14 +19,13 @@ def get_season_params(games):
 def calc_rpi(team,
              games,
              location_matters=False,
-             mode="normal",
-             mode_high_weight=1,
-             mode_low_weight=1,
+             high_weight=1,
+             low_weight=1,
              weight_wp=0.25,
              weight_opwp=0.50,
              weight_opopwp=0.25):
 
-    wp     = get_wp(team, games, location_matters, mode, mode_high_weight, mode_low_weight)
+    wp     = get_wp(team, games, location_matters, high_weight, low_weight)
     opwp   = get_opwp(team, games)
     opopwp = get_opopwp(team, games)
 
@@ -36,22 +35,13 @@ def calc_rpi(team,
 def get_wp(team,
            games,
            location_matters=False,
-           mode="normal",
-           mode_high_weight=1,
-           mode_low_weight=1):
+           high_weight=1,
+           low_weight=1):
     
     wins = losses = 0
-    home_win_weight = home_loss_weight = away_win_weight = away_loss_weight = 1
 
-    if mode == "baseball":
-        home_win_weight = away_loss_weight = 0.7
-        home_loss_weight = away_win_weight = 1.3
-    if mode == "basketball":
-        home_win_weight = away_loss_weight = 0.6
-        home_loss_weight = away_win_weight = 1.4
-    if mode == "custom":
-        home_win_weight = away_loss_weight = mode_low_weight
-        home_loss_weight = away_win_weight = mode_high_weight
+    home_win_weight = away_loss_weight = low_weight
+    home_loss_weight = away_win_weight = high_weight
  
     if location_matters:
         for game in games:

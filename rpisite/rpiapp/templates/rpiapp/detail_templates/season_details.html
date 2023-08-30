@@ -43,7 +43,6 @@
             <button type="submit">Search for games on date</button>
         </form>
         <h2> Games: </h2>
-        <p> **In seasons with many games (>500), editing and deleting a game may take a while. Do not leave the page** </p>
         <ul>
             {% for date, games in season_games_by_date.items %}
             <li>{{date}}</li>

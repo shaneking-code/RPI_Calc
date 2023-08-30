@@ -11,8 +11,8 @@ from ..models import League, Team
 
 def user_profile(request, user_id):
     view_user = get_object_or_404(User, id=user_id)
-    leagues = League.objects.filter(created_by=view_user)
-    teams = Team.objects.filter(created_by=view_user)
+    leagues = League.objects.filter(created_by=view_user).order_by("name")
+    teams = Team.objects.filter(created_by=view_user).order_by("name")
 
     context = {
         "view_user" : view_user,

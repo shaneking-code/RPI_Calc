@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from ..models import League, Team, Season, Game
+from ..utils.bulk_rpi import bulk_calculate_rpis, toggle_bulk_processing
 
 @login_required
 def delete_league(request, league_id):
@@ -21,9 +22,16 @@ def delete_league(request, league_id):
 def delete_team(request, league_id, team_id):
 
     if request.method == 'POST':
+        league = get_object_or_404(League, id=league_id)
         team = get_object_or_404(Team, id=team_id)
         if request.user == team.created_by or request.user.is_superuser:
+            league_games = league.league_games.all()
+            league_seasons = league.seasons.all()
+            toggle_bulk_processing(league_games, True)            
             team.delete()
+            for season in league_seasons:
+                bulk_calculate_rpis(season, season.season_games.all())
+            toggle_bulk_processing(league_games, False) 
             messages.success(request, f"Team '{team}' deleted successfully")
         else:
             messages.error(request, "You cannot delete this team as you do not own it")
