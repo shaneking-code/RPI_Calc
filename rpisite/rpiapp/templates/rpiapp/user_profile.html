@@ -39,6 +39,7 @@
                 {% endif %}
                 <a href="{% url 'rpiapp:league_details' league.id %}">{{league}}</a>
             </li>
+            {% if teams %}
             <span class="uprofile-span">Teams:</span>
             <br>
             <ul>
@@ -61,6 +62,7 @@
                     {% endif %}
                 {% endfor %}
             </ul>
+            {% endif %}
             {% endfor %}
         </ul>
     </section>
