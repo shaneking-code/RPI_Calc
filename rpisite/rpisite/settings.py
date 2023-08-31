@@ -21,8 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-with open('../misc/secret_key.txt') as f:
-    SECRET_KEY = f.read()
+SECRET_KEY = 'django-insecure-1n3_b#&iygcpc1vr&4nyc_@k03ysf^w+2uiqhtq*da_8@5q_lq'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -127,6 +126,3 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #### BEGIN CUSTOM SETTINGS ####
 LOGIN_URL = "/rpiapp/login/"
-SECURE_SSL_REDIRECT   = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE    = True
