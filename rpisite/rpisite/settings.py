@@ -134,5 +134,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #### BEGIN CUSTOM SETTINGS ####
 LOGIN_URL = "/rpiapp/login/"
+CSRF_COOKIE_DOMAIN = None
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
