@@ -9,6 +9,7 @@ from ..utils.rpi import get_season_params
 def index(request):
 
     # Show the most recent 5 games
+    latest_games = Game.objects.all().order_by("-date")[:5]
 
     if request.method == 'POST':
         add_league_form = AddLeagueForm(request.POST)
@@ -22,7 +23,8 @@ def index(request):
         add_league_form = AddLeagueForm()
 
     context = {
-        "add_league_form" : add_league_form
+        "add_league_form" : add_league_form,
+        "latest_games" : latest_games
     }
 
     return render(request, "rpiapp/detail_templates/index.html", context)

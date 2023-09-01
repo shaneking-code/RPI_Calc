@@ -30,6 +30,17 @@
         </form>
         {% endif %}
     </section>
+    <section>
+        {% if latest_games %}
+        <ul>
+            {% for game in latest_games %}
+            <li>{{game}}</li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p> No recent games... </p>
+        {% endif %}
+    </section>
 </body>
 {% endblock %}
 </html>
