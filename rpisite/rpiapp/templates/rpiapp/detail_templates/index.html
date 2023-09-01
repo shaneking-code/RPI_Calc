@@ -30,57 +30,6 @@
         </form>
         {% endif %}
     </section>
-    <section>
-        <h1> Leagues </h1>
-        <h2> Professional: </h2>
-        <ul>
-            {% for league in major_leagues_objs %}
-            <li>
-                {% if user == league.created_by or user.is_superuser %}
-                <form action="{% url 'rpiapp:edit_league' league.id %}">
-                    {% csrf_token %}
-                    <button type="submit">Edit</button>
-                </form>
-                <form style='display:inline;' action="{% url 'rpiapp:delete_league' league.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit">Delete</button>
-                </form>
-                {% endif %}
-                <a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a>
-            </li>
-            {% endfor %}
-        </ul>
-        <h2> Collegiate: </h2>
-        <ul>
-            {% for league in ncaa_leagues_objs %}
-            <li>
-                {% if user == league.created_by or user.is_superuser %}
-                <form action="{% url 'rpiapp:edit_league' league.id %}">
-                    {% csrf_token %}
-                    <button type="submit">Edit</button>
-                </form>
-                <form style='display:inline;' action="{% url 'rpiapp:delete_league' league.id %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit">Delete</button>
-                </form>
-                {% endif %}
-                <a href="{% url 'rpiapp:league_details' league.id %}" > {{league}} </a>
-            </li>
-            {% endfor %}      
-        </ul>
-    </section>
-    <section>
-        <h1> Latest games in the database </h1>
-        {% if latest_games %}
-            <ul>
-                {% for game in latest_games %}
-                    <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}" > {{game}}</a></li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p> No recent games available... </p>
-        {% endif %}
-    </section>
 </body>
 {% endblock %}
 </html>

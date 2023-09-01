@@ -9,27 +9,6 @@ from ..utils.rpi import get_season_params
 def index(request):
 
     # Show the most recent 5 games
-    latest_games = Game.objects.all().order_by("-id")[:5]
-
-    MAJOR_LEAGUES = ["Major League Baseball", 
-                     "National Basketball Association", 
-                     "National Football League", 
-                     "National Hockey League", 
-                     ]
-    MAJOR_LEAGUES_OBJS = []
-    for league in MAJOR_LEAGUES:
-        MAJOR_LEAGUES_OBJS.append(get_object_or_404(League, name=league))
-
-    NCAA_LEAGUES = ["NCAA Baseball",
-                    "NCAA Football",
-                    "NCAA Men's Basketball", 
-                    "NCAA Women's Basketball", 
-                    "NCAA Men's Hockey",
-                    "NCAA Women's Hockey"
-                    ]
-    NCAA_LEAGUES_OBJS = []
-    for league in NCAA_LEAGUES:
-        NCAA_LEAGUES_OBJS.append(get_object_or_404(League, name=league))
 
     if request.method == 'POST':
         add_league_form = AddLeagueForm(request.POST)
@@ -43,9 +22,6 @@ def index(request):
         add_league_form = AddLeagueForm()
 
     context = {
-        "latest_games" : latest_games,
-        "major_leagues_objs" : MAJOR_LEAGUES_OBJS,
-        "ncaa_leagues_objs" : NCAA_LEAGUES_OBJS,
         "add_league_form" : add_league_form
     }
 
