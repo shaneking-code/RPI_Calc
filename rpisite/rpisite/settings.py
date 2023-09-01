@@ -134,6 +134,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #### BEGIN CUSTOM SETTINGS ####
 LOGIN_URL = "/rpiapp/login/"
-CSRF_TRUSTED_ORIGINS=['*']
+CSRF_TRUSTED_ORIGINS=['https://rpicalc-production.up.railway.app/']
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
