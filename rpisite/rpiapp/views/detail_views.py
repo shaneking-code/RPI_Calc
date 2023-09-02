@@ -4,12 +4,21 @@ from django.urls import reverse
 from django.contrib import messages
 from ..forms.add_forms import AddLeagueForm, AddTeamForm, AddSeasonForm, AddGameForm
 from ..models import League, Team, Season, Game, RPI
+from django.contrib.auth.models import User
 from ..utils.rpi import get_season_params
 
 def index(request):
 
     # Show the most recent 5 games
     latest_games = Game.objects.all().order_by("-date")[:5]
+
+    superuser = User.objects.filter(is_superuser=True)[0]
+
+    pro_leagues_list = ["National Football League", "National Basketball Association", "Major League Baseball", "National Hockey League"]
+    pro_leagues = League.objects.filter(name__in=pro_leagues_list, created_by=superuser).order_by("name")
+
+    college_leagues_list = ["NCAA Men's Hockey","NCAA Women's Hockey","NCAA Men's Basketball","NCAA Women's Basketball","NCAA Baseball","NCAA Football",]
+    college_leagues = League.objects.filter(name__in=college_leagues_list, created_by=superuser)
 
     if request.method == 'POST':
         add_league_form = AddLeagueForm(request.POST)
@@ -24,7 +33,9 @@ def index(request):
 
     context = {
         "add_league_form" : add_league_form,
-        "latest_games" : latest_games
+        "latest_games" : latest_games,
+        "pro_leagues" : pro_leagues,
+        "college_leagues" : college_leagues
     }
 
     return render(request, "rpiapp/detail_templates/index.html", context)

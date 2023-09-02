@@ -22,15 +22,30 @@
     </section>
     <section>
         {% if user.is_authenticated %}
-        <h2> Add League: </h2>
-        <form method="post">
-            {% csrf_token %}
-            {{add_league_form.name}}
-            <button type="submit">Add League</button>
-        </form>
+            <h2> Add League: </h2>
+            <form method="post">
+                {% csrf_token %}
+                {{add_league_form.name}}
+                <button type="submit">Add League</button>
+            </form>
         {% endif %}
     </section>
     <section>
+        <h2> Pro Leagues </h2>
+        <ul>
+            {% for league in pro_leagues %}
+            <li>{{league}}</li>
+            {% endfor %}
+        </ul>
+        <h2> Collegiate Leagues </h2>
+        <ul>
+            {% for league in college_leagues %}
+            <li>{{league}}</li>
+            {% endfor %}
+        </ul>
+    </section>
+    <section>
+        <h2> Latest games: </h2>
         {% if latest_games %}
         <ul>
             {% for game in latest_games %}
