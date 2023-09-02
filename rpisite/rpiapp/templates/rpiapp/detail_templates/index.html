@@ -20,16 +20,16 @@
             <button type="submit">Search for User</button>
         </form>
     </section>
+    {% if user.is_authenticated %}
     <section>
-        {% if user.is_authenticated %}
             <h2> Add League: </h2>
             <form method="post">
                 {% csrf_token %}
                 {{add_league_form.name}}
                 <button type="submit">Add League</button>
             </form>
-        {% endif %}
     </section>
+    {% endif %}
     <section>
         <h2> Pro Leagues </h2>
         <ul>
