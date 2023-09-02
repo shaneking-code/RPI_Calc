@@ -30,18 +30,17 @@
             </form>
         {% endif %}
     </section>
-    <h2> TEST </h2>
     <section>
         <h2> Pro Leagues </h2>
         <ul>
             {% for league in pro_leagues %}
-            <li>{{league}}</li>
+            <li><a href="{% url 'rpiapp:league_details' league.id %}">{{league}}</a></li>
             {% endfor %}
         </ul>
         <h2> Collegiate Leagues </h2>
         <ul>
             {% for league in college_leagues %}
-            <li>{{league}}</li>
+            <li><a href="{% url 'rpiapp:league_details' league.id %}">{{league}}</a></li>
             {% endfor %}
         </ul>
     </section>
@@ -50,7 +49,7 @@
         {% if latest_games %}
         <ul>
             {% for game in latest_games %}
-            <li>{{game}}</li>
+            <li><a href="{% url 'rpiapp:game_details' game.league.id game.season.id game.id %}">{{game}}</a></li>
             {% endfor %}
         </ul>
         {% else %}
